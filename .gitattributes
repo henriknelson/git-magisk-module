@@ -1,1 +1,2 @@
 *.pm linguist-language=Shell
+*.tcl linguist-language=Shell
