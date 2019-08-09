@@ -11,5 +11,5 @@ else
   term=screen;
 fi;
 
-resize >/dev/null;
+resize 2>/dev/null;
 GIT_TEMPLATE_DIR=$dir/../usr/share/git-core/templates GIT_EXEC_PATH=$dir/../usr/libexec/git-core TERMINFO=$dir/../etc/terminfo TERM=$term $dir/git.bin "$@";
