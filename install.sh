@@ -158,9 +158,9 @@ set_permissions() {
   find $MODPATH/system/etc -type f -exec chmod 644 {} +;
   chmod -R 755 $MODPATH/system/etc/bash_completion.d;
 
-  chown -R 0:0 $MODPATH/system/etc/terminfo;
-  find $MODPATH/system/etc/terminfo -type d -exec chmod 755 {} +;
-  find $MODPATH/system/etc/terminfo -type f -exec chmod 644 {} +;
+  chown -R 0:0 $MODPATH/system/usr/share/terminfo;
+  find $MODPATH/system/usr/share/terminfo -type d -exec chmod 755 {} +;
+  find $MODPATH/system/usr/share/terminfo -type f -exec chmod 644 {} +;
 
   ui_print "[6/7] Installing to /system/usr/share..";
   chown -R 0:0 $MODPATH/system/usr/share;

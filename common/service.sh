@@ -19,15 +19,42 @@ symlink_from_file() {
    chmod -R 755 $2;
 }
 
+cp_man() {
+   man_dir=$1;
+   echo $man_dir;
+   if [[ ! -d "/system/usr/share/man/$man_dir" ]]; then
+      mkdir -p /system/usr/share/man/$man_dir;
+   fi
+
+   for man_file in $MODDIR/system/usr/share/man/$man_dir/*; do
+      cp -f $MODDIR/system/usr/share/man/$man_dir/$man_file /system/usr/share/man/$man_dir;
+      chown 0:0 /system/usr/share/man/$man_dir/$man_file;
+      chmod 644 /system/usr/share/man/$man_dir/$man_file;
+   done
+}
+
 mount -o rw,remount /system;
 
 cd /system/bin;
 cp $MODDIR/custom/symlinks_bin .;
 symlink_from_file "$(pwd)/symlinks_bin" "$(pwd)";
 
-
 cd /system/usr/libexec/git-core;
 cp $MODDIR/custom/symlinks_git_core .;
 symlink_from_file "$(pwd)/symlinks_git_core" "$(pwd)";
 
 mount -o ro,remount /system;
+
+mount -o rw,remount /system/usr/share;
+
+for dir in $MODDIR/system/usr/share/man/man*/; do
+    dir="${dir%/}";
+    dir="${dir##*/}";
+    cp_man $dir;
+done
+
+if [[ -s "/system/bin/mandoc" ]]; then
+  makewhatis /system/usr/share/man;
+fi
+
+mount -o ro,remount /system/usr/share;

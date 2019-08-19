@@ -1,6 +1,6 @@
 id=git-ndk
 name=Git for Android
-version=v2.22.0
-versionCode=1
+version=v2.23.0
+versionCode=4
 author=nelshh
 description=A statically built version of the git client for android (aarch64)
