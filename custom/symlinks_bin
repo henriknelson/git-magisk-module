@@ -1,3 +1,0 @@
-git-receive-pack;git.bin
-git-upload-archive;git.bin
-git-upload-pack;git.bin

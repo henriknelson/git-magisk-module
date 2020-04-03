@@ -124,7 +124,7 @@ REPLACE="
 print_modname() {
   ui_print "*********************************************"
   ui_print "     git for Android       	    	       "
-  ui_print "         - v2.22.0                           "
+  ui_print "         - v2.25.1                           "
   ui_print "         - built by nelshh @ xda-developers  "
   ui_print "*********************************************"
 }
@@ -143,30 +143,40 @@ set_permissions() {
   ui_print "[3/7] Installing to /system/bin..";
   chown -R 0:0 $MODPATH/system/bin;
   chmod -R 755 $MODPATH/system/bin;
-  find $MODPATH/system/bin -type f -exec chmod 755 {} +;
-  find $MODPATH/system/bin -type l -exec chmod 755 {} +;
+  find $MODPATH/system/bin -type f -exec chmod 755 {} \+;
+  find $MODPATH/system/bin -type l -exec chmod 755 {} \+;
 
   ui_print "[4/7] Installing to /system/usr/libexec..";
   chown -R 0:0 $MODPATH/system/usr/libexec;
   chmod -R 755 $MODPATH/system/usr/libexec;
-  find $MODPATH/system/usr/libexec -type d -exec chmod 755 {} +;
-  find $MODPATH/system/usr/libexec -type f -exec chmod 755 {} +;
+  find $MODPATH/system/usr/libexec -type d -exec chmod 755 {} \+;
+  find $MODPATH/system/usr/libexec -type f -exec chmod 755 {} \+;
 
   ui_print "[5/7] Installing to /system/etc..";
   chown -R 0:0 $MODPATH/system/etc;
-  find $MODPATH/system/etc -type d -exec chmod 755 {} +;
-  find $MODPATH/system/etc -type f -exec chmod 644 {} +;
+  find $MODPATH/system/etc -type d -exec chmod 755 {} \+;
+  find $MODPATH/system/etc -type f -exec chmod 644 {} \+;
   chmod -R 755 $MODPATH/system/etc/bash_completion.d;
 
   chown -R 0:0 $MODPATH/system/usr/share/terminfo;
-  find $MODPATH/system/usr/share/terminfo -type d -exec chmod 755 {} +;
-  find $MODPATH/system/usr/share/terminfo -type f -exec chmod 644 {} +;
+  find $MODPATH/system/usr/share/terminfo -type d -exec chmod 755 {} \+;
+  find $MODPATH/system/usr/share/terminfo -type f -exec chmod 644 {} \+;
 
   ui_print "[6/7] Installing to /system/usr/share..";
   chown -R 0:0 $MODPATH/system/usr/share;
   chmod -R 755 $MODPATH/system/usr/share;
-  find $MODPATH/system/usr/share -type d -exec chmod 755 {} +;
-  find $MODPATH/system/usr/share -type f -exec chmod 644 {} +;
+  find $MODPATH/system/usr/share -type d -exec chmod 755 {} \+;
+  find $MODPATH/system/usr/share -type f -exec chmod 644 {} \+;
+
+  mkdir -p /data/man;
+  cp -r $MODPATH/custom/man/* /data/man/;
+  chmod -R 664 /data/man;
+  chown -R 0:0 /data/man;
+  find /data/man -type d -exec chmod 755 {} \+;
+  find /data/man -type f -exec chmod 664 {} \+;
+  if [[ -s "/system/bin/mandoc" ]]; then
+	makewhatis /data/man;
+  fi
 
   ui_print "[7/7] Installation finished";
 }
