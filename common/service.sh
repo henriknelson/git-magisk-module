@@ -19,8 +19,8 @@ symlink_from_file() {
    chmod -R 755 $2;
 }
 
-mount -o rw,remount /system;
-mount -o rw,remount /system/usr;
+mount -o rw,remount /system/bin;
+mount -o rw,remount /system/usr/libexec;
 
 cd /system/bin;
 cp $MODDIR/symlinks/symlinks_bin .;
@@ -30,5 +30,5 @@ cd /system/usr/libexec/git-core;
 cp $MODDIR/symlinks/symlinks_git_core .;
 symlink_from_file "$(pwd)/symlinks_git_core" "$(pwd)";
 
-mount -o ro,remount /system;
-mount -o ro,remount /system/usr;
+mount -o ro,remount /system/bin;
+mount -o ro,remount /system/usr/libexec;

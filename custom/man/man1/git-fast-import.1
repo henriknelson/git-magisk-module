@@ -2,12 +2,12 @@
 .\"     Title: git-fast-import
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/28/2019
+.\"      Date: 04/12/2020
 .\"    Manual: Git Manual
-.\"    Source: Git 2.23.0
+.\"    Source: Git 2.26.0
 .\"  Language: English
 .\"
-.TH "GIT\-FAST\-IMPORT" "1" "08/28/2019" "Git 2\&.23\&.0" "Git Manual"
+.TH "GIT\-FAST\-IMPORT" "1" "04/12/2020" "Git 2\&.26\&.0" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -59,6 +59,32 @@ directives), the corresponding messages will still be shown\&.
 \-\-stats
 .RS 4
 Display some basic statistics about the objects fast\-import has created, the packfiles they were stored into, and the memory used by fast\-import during this run\&. Showing this output is currently the default, but can be disabled with \-\-quiet\&.
+.RE
+.PP
+\-\-allow\-unsafe\-features
+.RS 4
+Many command\-line options can be provided as part of the fast\-import stream itself by using the
+\fBfeature\fR
+or
+\fBoption\fR
+commands\&. However, some of these options are unsafe (e\&.g\&., allowing fast\-import to access the filesystem outside of the repository)\&. These options are disabled by default, but can be allowed by providing this option on the command line\&. This currently impacts only the
+\fBexport\-marks\fR,
+\fBimport\-marks\fR, and
+\fBimport\-marks\-if\-exists\fR
+feature commands\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+Only enable this option if you trust the program generating the
+fast\-import stream! This option is enabled automatically for
+remote\-helpers that use the `import` capability, as they are
+already trusted to run their own code\&.
+.fi
+.if n \{\
+.RE
+.\}
 .RE
 .SS "Options for Frontends"
 .PP
@@ -273,6 +299,11 @@ Convert raw file data into a blob, for future use in a
 command\&. This command is optional and is not needed to perform an import\&.
 .RE
 .PP
+\fBalias\fR
+.RS 4
+Record that a mark refers to a given object without first creating any new object\&. Using \-\-import\-marks and referring to missing marks will cause fast\-import to fail, so aliases can provide a way to set otherwise pruned commits to a valid value (e\&.g\&. the nearest non\-pruned ancestor)\&.
+.RE
+.PP
 \fBcheckpoint\fR
 .RS 4
 Forces fast\-import to close the current packfile, generate its unique SHA\-1 checksum and index, and start a new packfile\&. This command is optional and is not needed to perform an import\&.
@@ -349,7 +380,7 @@ Create or update a branch with a new commit, recording one logical change to the
         (\*(Aqencoding\*(Aq SP <encoding>)?
         data
         (\*(Aqfrom\*(Aq SP <commit\-ish> LF)?
-        (\*(Aqmerge\*(Aq SP <commit\-ish> LF)?
+        (\*(Aqmerge\*(Aq SP <commit\-ish> LF)*
         (filemodify | filedelete | filecopy | filerename | filedeleteall | notemodify)*
         LF?
 .fi
@@ -909,6 +940,7 @@ Creates an annotated tag referring to a specific commit\&. To create lightweight
 .\}
 .nf
         \*(Aqtag\*(Aq SP <name> LF
+        mark?
         \*(Aqfrom\*(Aq SP <commit\-ish> LF
         original\-oid?
         \*(Aqtagger\*(Aq (SP <name>)? SP LT <email> GT SP <when> LF
@@ -1062,6 +1094,24 @@ after
 \fB<delim> LF\fR
 is optional (it used to be required)\&.
 .RE
+.SS "\fBalias\fR"
+.sp
+Record that a mark refers to a given object without first creating any new object\&.
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+        \*(Aqalias\*(Aq LF
+        mark
+        \*(Aqto\*(Aq SP <commit\-ish> LF
+        LF?
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+For a detailed description of \fB<commit\-ish>\fR see above under \fBfrom\fR\&.
 .SS "\fBcheckpoint\fR"
 .sp
 Forces fast\-import to close the current packfile, start a new one, and to save out all current branch refs, tags and marks\&.

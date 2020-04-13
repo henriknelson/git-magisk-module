@@ -193,7 +193,8 @@ create_stash () {
 			GIT_INDEX_FILE="$TMPindex" &&
 			export GIT_INDEX_FILE &&
 			git diff-index --name-only -z HEAD -- "$@" >"$TMP-stagenames" &&
-			git update-index -z --add --remove --stdin <"$TMP-stagenames" &&
+			git update-index --ignore-skip-worktree-entries \
+				-z --add --remove --stdin <"$TMP-stagenames" &&
 			git write-tree &&
 			rm -f "$TMPindex"
 		) ) ||
@@ -206,7 +207,7 @@ create_stash () {
 
 		# find out what the user wants
 		GIT_INDEX_FILE="$TMP-index" \
-			git add--interactive --patch=stash -- "$@" &&
+			git add --legacy-stash-p -- "$@" &&
 
 		# state of the working tree
 		w_tree=$(GIT_INDEX_FILE="$TMP-index" git write-tree) ||
@@ -370,7 +371,7 @@ push_stash () {
 			git diff-index -p --cached --binary HEAD -- "$@" |
 			git apply --index -R
 		else
-			git reset --hard -q
+			git reset --hard -q --no-recurse-submodules
 		fi
 
 		if test "$keep_index" = "t" && test -n "$i_tree"

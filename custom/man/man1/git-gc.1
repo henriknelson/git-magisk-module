@@ -2,12 +2,12 @@
 .\"     Title: git-gc
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/28/2019
+.\"      Date: 04/12/2020
 .\"    Manual: Git Manual
-.\"    Source: Git 2.23.0
+.\"    Source: Git 2.26.0
 .\"  Language: English
 .\"
-.TH "GIT\-GC" "1" "08/28/2019" "Git 2\&.23\&.0" "Git Manual"
+.TH "GIT\-GC" "1" "04/12/2020" "Git 2\&.26\&.0" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -209,7 +209,7 @@ If true, then gc will rewrite the commit\-graph file when
 \fBgit-gc\fR(1)
 is run\&. When using
 \fBgit gc \-\-auto\fR
-the commit\-graph will be updated if housekeeping is required\&. Default is false\&. See
+the commit\-graph will be updated if housekeeping is required\&. Default is true\&. See
 \fBgit-commit-graph\fR(1)
 for details\&.
 .RE
@@ -295,7 +295,7 @@ is run\&. You can also use more human\-readable "1\&.month\&.ago", etc\&. The de
 .RE
 .SH "NOTES"
 .sp
-\fIgit gc\fR tries very hard not to delete objects that are referenced anywhere in your repository\&. In particular, it will keep not only objects referenced by your current set of branches and tags, but also objects referenced by the index, remote\-tracking branches, refs saved by \fIgit filter\-branch\fR in refs/original/, reflogs (which may reference commits in branches that were later amended or rewound), and anything else in the refs/* namespace\&. If you are expecting some objects to be deleted and they aren\(cqt, check all of those locations and decide whether it makes sense in your case to remove those references\&.
+\fIgit gc\fR tries very hard not to delete objects that are referenced anywhere in your repository\&. In particular, it will keep not only objects referenced by your current set of branches and tags, but also objects referenced by the index, remote\-tracking branches, notes saved by \fIgit notes\fR under refs/notes/, reflogs (which may reference commits in branches that were later amended or rewound), and anything else in the refs/* namespace\&. If you are expecting some objects to be deleted and they aren\(cqt, check all of those locations and decide whether it makes sense in your case to remove those references\&.
 .sp
 On the other hand, when \fIgit gc\fR runs concurrently with another process, there is a risk of it deleting an object that the other process is using but hasn\(cqt created a reference to\&. This may just cause the other process to fail or may corrupt the repository if the other process later adds a reference to the deleted object\&. Git has two features that significantly mitigate this problem:
 .sp

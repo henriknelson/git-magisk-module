@@ -2,12 +2,12 @@
 .\"     Title: git-rev-list
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/28/2019
+.\"      Date: 04/12/2020
 .\"    Manual: Git Manual
-.\"    Source: Git 2.23.0
+.\"    Source: Git 2.26.0
 .\"  Language: English
 .\"
-.TH "GIT\-REV\-LIST" "1" "08/28/2019" "Git 2\&.23\&.0" "Git Manual"
+.TH "GIT\-REV\-LIST" "1" "04/12/2020" "Git 2\&.26\&.0" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -32,59 +32,7 @@ git-rev-list \- Lists commit objects in reverse chronological order
 .SH "SYNOPSIS"
 .sp
 .nf
-\fIgit rev\-list\fR [ \-\-max\-count=<number> ]
-             [ \-\-skip=<number> ]
-             [ \-\-max\-age=<timestamp> ]
-             [ \-\-min\-age=<timestamp> ]
-             [ \-\-sparse ]
-             [ \-\-merges ]
-             [ \-\-no\-merges ]
-             [ \-\-min\-parents=<number> ]
-             [ \-\-no\-min\-parents ]
-             [ \-\-max\-parents=<number> ]
-             [ \-\-no\-max\-parents ]
-             [ \-\-first\-parent ]
-             [ \-\-remove\-empty ]
-             [ \-\-full\-history ]
-             [ \-\-not ]
-             [ \-\-all ]
-             [ \-\-branches[=<pattern>] ]
-             [ \-\-tags[=<pattern>] ]
-             [ \-\-remotes[=<pattern>] ]
-             [ \-\-glob=<glob\-pattern> ]
-             [ \-\-ignore\-missing ]
-             [ \-\-stdin ]
-             [ \-\-quiet ]
-             [ \-\-topo\-order ]
-             [ \-\-parents ]
-             [ \-\-timestamp ]
-             [ \-\-left\-right ]
-             [ \-\-left\-only ]
-             [ \-\-right\-only ]
-             [ \-\-cherry\-mark ]
-             [ \-\-cherry\-pick ]
-             [ \-\-encoding=<encoding> ]
-             [ \-\-(author|committer|grep)=<pattern> ]
-             [ \-\-regexp\-ignore\-case | \-i ]
-             [ \-\-extended\-regexp | \-E ]
-             [ \-\-fixed\-strings | \-F ]
-             [ \-\-date=<format>]
-             [ [ \-\-objects | \-\-objects\-edge | \-\-objects\-edge\-aggressive ]
-               [ \-\-unpacked ]
-               [ \-\-object\-names | \-\-no\-object\-names ]
-               [ \-\-filter=<filter\-spec> [ \-\-filter\-print\-omitted ] ] ]
-             [ \-\-missing=<missing\-action> ]
-             [ \-\-pretty | \-\-header ]
-             [ \-\-bisect ]
-             [ \-\-bisect\-vars ]
-             [ \-\-bisect\-all ]
-             [ \-\-merge ]
-             [ \-\-reverse ]
-             [ \-\-walk\-reflogs ]
-             [ \-\-no\-walk ] [ \-\-do\-walk ]
-             [ \-\-count ]
-             [ \-\-use\-bitmap\-index ]
-             <commit>\&... [ \-\- <paths>\&... ]
+\fIgit rev\-list\fR [<options>] <commit>\&... [[\-\-] <path>\&...]
 .fi
 .sp
 .SH "DESCRIPTION"
@@ -503,6 +451,8 @@ With
 \fB\-\-pretty\fR
 format other than
 \fBoneline\fR
+and
+\fBreference\fR
 (for obvious reasons), this causes the output to have two extra lines of information taken from the reflog\&. The reflog designator in the output may be shown as
 \fBref@{Nth}\fR
 (where
@@ -564,6 +514,9 @@ Under
 \fB\-\-pretty=oneline\fR, the commit message is prefixed with this information on the same line\&. This option cannot be combined with
 \fB\-\-reverse\fR\&. See also
 \fBgit-reflog\fR(1)\&.
+.sp
+Under
+\fB\-\-pretty=reference\fR, this information will not be shown at all\&.
 .RE
 .PP
 \-\-merge
@@ -1329,6 +1282,31 @@ omits all blobs and trees whose depth from the root tree is >= <depth> (minimum 
 Note that the form
 \fI\-\-filter=sparse:path=<path>\fR
 that wants to read from an arbitrary path on the filesystem has been dropped for security reasons\&.
+.sp
+Multiple
+\fI\-\-filter=\fR
+flags can be specified to combine filters\&. Only objects which are accepted by every filter are included\&.
+.sp
+The form
+\fI\-\-filter=combine:<filter1>+<filter2>+\&...<filterN>\fR
+can also be used to combined several filters, but this is harder than just repeating the
+\fI\-\-filter\fR
+flag and is usually not necessary\&. Filters are joined by
+\fI+\fR
+and individual filters are %\-encoded (i\&.e\&. URL\-encoded)\&. Besides the
+\fI+\fR
+and
+\fI%\fR
+characters, the following characters are reserved and also must be encoded:
+\fB~!@#$^&*()[]{}\e;",<>?\fR\fB\*(Aq`\fR
+as well as all characters with ASCII code <=
+\fB0x20\fR, which includes space and newline\&.
+.sp
+Other arbitrary characters can also be encoded\&. For instance,
+\fIcombine:tree:3+blob:none\fR
+and
+\fIcombine:tree%3A3+blob%3Anone\fR
+are equivalent\&.
 .RE
 .PP
 \-\-no\-filter
@@ -1403,6 +1381,7 @@ can be one of
 \fImedium\fR,
 \fIfull\fR,
 \fIfuller\fR,
+\fIreference\fR,
 \fIemail\fR,
 \fIraw\fR,
 \fIformat:<string>\fR
@@ -1716,7 +1695,7 @@ Print a number stating how many commits would have been listed, and suppress all
 .RE
 .SH "PRETTY FORMATS"
 .sp
-If the commit is a merge, and if the pretty\-format is not \fIoneline\fR, \fIemail\fR or \fIraw\fR, an additional line is inserted before the \fIAuthor:\fR line\&. This line begins with "Merge: " and the sha1s of ancestral commits are printed, separated by spaces\&. Note that the listed commits may not necessarily be the list of the \fBdirect\fR parent commits if you have limited your view of history: for example, if you are only interested in changes related to a certain directory or file\&.
+If the commit is a merge, and if the pretty\-format is not \fIoneline\fR, \fIemail\fR or \fIraw\fR, an additional line is inserted before the \fIAuthor:\fR line\&. This line begins with "Merge: " and the hashes of ancestral commits are printed, separated by spaces\&. Note that the listed commits may not necessarily be the list of the \fBdirect\fR parent commits if you have limited your view of history: for example, if you are only interested in changes related to a certain directory or file\&.
 .sp
 There are several built\-in formats, and you can define additional formats by setting a pretty\&.<name> config option to either another format name, or a \fIformat:\fR string, as described below (see \fBgit-config\fR(1))\&. Here are the details of the built\-in formats:
 .sp
@@ -1734,7 +1713,7 @@ There are several built\-in formats, and you can define additional formats by se
 .RS 4
 .\}
 .nf
-<sha1> <title line>
+<hash> <title line>
 .fi
 .if n \{\
 .RE
@@ -1757,7 +1736,7 @@ This is designed to be as compact as possible\&.
 .RS 4
 .\}
 .nf
-commit <sha1>
+commit <hash>
 Author: <author>
 .fi
 .if n \{\
@@ -1789,7 +1768,7 @@ Author: <author>
 .RS 4
 .\}
 .nf
-commit <sha1>
+commit <hash>
 Author: <author>
 Date:   <author date>
 .fi
@@ -1832,7 +1811,7 @@ Date:   <author date>
 .RS 4
 .\}
 .nf
-commit <sha1>
+commit <hash>
 Author: <author>
 Commit: <committer>
 .fi
@@ -1875,7 +1854,7 @@ Commit: <committer>
 .RS 4
 .\}
 .nf
-commit <sha1>
+commit <hash>
 Author:     <author>
 AuthorDate: <author date>
 Commit:     <committer>
@@ -1914,13 +1893,46 @@ CommitDate: <committer date>
 .sp -1
 .IP \(bu 2.3
 .\}
+\fIreference\fR
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+<abbrev hash> (<title line>, <short author date>)
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+This format is used to refer to another commit in a commit message and is the same as
+\fB\-\-pretty=\*(Aqformat:%C(auto)%h (%s, %ad)\*(Aq\fR\&. By default, the date is formatted with
+\fB\-\-date=short\fR
+unless another
+\fB\-\-date\fR
+option is explicitly specified\&. As with any
+\fBformat:\fR
+with format placeholders, its output is not affected by other options like
+\fB\-\-decorate\fR
+and
+\fB\-\-walk\-reflogs\fR\&.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
 \fIemail\fR
 .sp
 .if n \{\
 .RS 4
 .\}
 .nf
-From <sha1> <date>
+From <hash> <date>
 From: <author>
 Date: <author date>
 Subject: [PATCH] <title line>
@@ -1952,7 +1964,7 @@ Subject: [PATCH] <title line>
 .sp
 The
 \fIraw\fR
-format shows the entire commit exactly as stored in the commit object\&. Notably, the SHA\-1s are displayed in full, regardless of whether \-\-abbrev or \-\-no\-abbrev are used, and
+format shows the entire commit exactly as stored in the commit object\&. Notably, the hashes are displayed in full, regardless of whether \-\-abbrev or \-\-no\-abbrev are used, and
 \fIparents\fR
 information show the true parent commits, without taking grafts or history simplification into account\&. Note that this format affects the way commits are displayed, but not the way the diff is shown e\&.g\&. with
 \fBgit log \-\-raw\fR\&. To get full object names in a raw diff format, use
@@ -2183,6 +2195,22 @@ or
 \fBgit-blame\fR(1))
 .RE
 .PP
+\fI%al\fR
+.RS 4
+author email local\-part (the part before the
+\fI@\fR
+sign)
+.RE
+.PP
+\fI%aL\fR
+.RS 4
+author local\-part (see
+\fI%al\fR) respecting \&.mailmap, see
+\fBgit-shortlog\fR(1)
+or
+\fBgit-blame\fR(1))
+.RE
+.PP
 \fI%ad\fR
 .RS 4
 author date (format respects \-\-date= option)
@@ -2213,6 +2241,11 @@ author date, ISO 8601\-like format
 author date, strict ISO 8601 format
 .RE
 .PP
+\fI%as\fR
+.RS 4
+author date, short format (\fBYYYY\-MM\-DD\fR)
+.RE
+.PP
 \fI%cn\fR
 .RS 4
 committer name
@@ -2234,6 +2267,22 @@ committer email
 \fI%cE\fR
 .RS 4
 committer email (respecting \&.mailmap, see
+\fBgit-shortlog\fR(1)
+or
+\fBgit-blame\fR(1))
+.RE
+.PP
+\fI%cl\fR
+.RS 4
+author email local\-part (the part before the
+\fI@\fR
+sign)
+.RE
+.PP
+\fI%cL\fR
+.RS 4
+author local\-part (see
+\fI%cl\fR) respecting \&.mailmap, see
 \fBgit-shortlog\fR(1)
 or
 \fBgit-blame\fR(1))
@@ -2267,6 +2316,11 @@ committer date, ISO 8601\-like format
 \fI%cI\fR
 .RS 4
 committer date, strict ISO 8601 format
+.RE
+.PP
+\fI%cs\fR
+.RS 4
+committer date, short format (\fBYYYY\-MM\-DD\fR)
 .RE
 .PP
 \fI%d\fR
@@ -2342,12 +2396,17 @@ show the fingerprint of the key used to sign a signed commit
 show the fingerprint of the primary key whose subkey was used to sign a signed commit
 .RE
 .PP
+\fI%GT\fR
+.RS 4
+show the trust level for the key used to sign a signed commit
+.RE
+.PP
 \fI%gD\fR
 .RS 4
 reflog selector, e\&.g\&.,
 \fBrefs/stash@{1}\fR
 or
-\fBrefs/stash@{2 minutes ago\fR}; the format follows the rules described for the
+\fBrefs/stash@{2 minutes ago}\fR; the format follows the rules described for the
 \fB\-g\fR
 option\&. The portion before the
 \fB@\fR

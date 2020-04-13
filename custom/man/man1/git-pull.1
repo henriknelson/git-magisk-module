@@ -2,12 +2,12 @@
 .\"     Title: git-pull
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/28/2019
+.\"      Date: 04/12/2020
 .\"    Manual: Git Manual
-.\"    Source: Git 2.23.0
+.\"    Source: Git 2.26.0
 .\"  Language: English
 .\"
-.TH "GIT\-PULL" "1" "08/28/2019" "Git 2\&.23\&.0" "Git Manual"
+.TH "GIT\-PULL" "1" "04/12/2020" "Git 2\&.26\&.0" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -132,7 +132,7 @@ at the beginning of them\&.
 .PP
 \-\-cleanup=<mode>
 .RS 4
-This option determines how the merge message will be cleaned up before commiting\&. See
+This option determines how the merge message will be cleaned up before committing\&. See
 \fBgit-commit\fR(1)
 for more details\&. In addition, if the
 \fI<mode>\fR
@@ -142,23 +142,24 @@ is given a value of
 before being passed on to the commit machinery in the case of a merge conflict\&.
 .RE
 .PP
-\-\-ff
+\-\-ff, \-\-no\-ff, \-\-ff\-only
 .RS 4
-When the merge resolves as a fast\-forward, only update the branch pointer, without creating a merge commit\&. This is the default behavior\&.
-.RE
-.PP
-\-\-no\-ff
-.RS 4
-Create a merge commit even when the merge resolves as a fast\-forward\&. This is the default behaviour when merging an annotated (and possibly signed) tag that is not stored in its natural place in
-\fIrefs/tags/\fR
-hierarchy\&.
-.RE
-.PP
-\-\-ff\-only
-.RS 4
-Refuse to merge and exit with a non\-zero status unless the current
-\fBHEAD\fR
-is already up to date or the merge can be resolved as a fast\-forward\&.
+Specifies how a merge is handled when the merged\-in history is already a descendant of the current history\&.
+\fB\-\-ff\fR
+is the default unless merging an annotated (and possibly signed) tag that is not stored in its natural place in the
+\fBrefs/tags/\fR
+hierarchy, in which case
+\fB\-\-no\-ff\fR
+is assumed\&.
+.sp
+With
+\fB\-\-ff\fR, when possible resolve the merge as a fast\-forward (only update the branch pointer to match the merged branch; do not create a merge commit)\&. When not possible (when the merged\-in history is not a descendant of the current history), create a merge commit\&.
+.sp
+With
+\fB\-\-no\-ff\fR, create a merge commit in all cases, even when the merge could instead be resolved as a fast\-forward\&.
+.sp
+With
+\fB\-\-ff\-only\fR, resolve the merge as a fast\-forward when possible\&. When not possible, refuse to merge and exit with a non\-zero status\&.
 .RE
 .PP
 \-S[<keyid>], \-\-gpg\-sign[=<keyid>]
@@ -204,6 +205,12 @@ command to create a merge commit)\&. This allows you to create a single commit o
 With \-\-no\-squash perform the merge and commit the result\&. This option can be used to override \-\-squash\&.
 .sp
 With \-\-squash, \-\-commit is not allowed, and will fail\&.
+.RE
+.PP
+\-\-no\-verify
+.RS 4
+This option bypasses the pre\-merge and commit\-msg hooks\&. See also
+\fBgithooks\fR(5)\&.
 .RE
 .PP
 \-s <strategy>, \-\-strategy=<strategy>
@@ -710,6 +717,8 @@ file:///path/to/repo\&.git/
 .sp
 These two syntaxes are mostly equivalent, except when cloning, when the former implies \-\-local option\&. See \fBgit-clone\fR(1) for details\&.
 .sp
+\fIgit clone\fR, \fIgit fetch\fR and \fIgit pull\fR, but not \fIgit push\fR, will also accept a suitable bundle file\&. See \fBgit-bundle\fR(1)\&.
+.sp
 When Git doesn\(cqt know how to handle a certain transport protocol, it attempts to use the \fIremote\-<transport>\fR remote helper, if one exists\&. To explicitly request a remote helper, the following syntax may be used:
 .sp
 .RS 4
@@ -931,7 +940,7 @@ ours
 .RS 4
 This option forces conflicting hunks to be auto\-resolved cleanly by favoring
 \fIour\fR
-version\&. Changes from the other tree that do not conflict with our side are reflected to the merge result\&. For a binary file, the entire contents are taken from our side\&.
+version\&. Changes from the other tree that do not conflict with our side are reflected in the merge result\&. For a binary file, the entire contents are taken from our side\&.
 .sp
 This should not be confused with the
 \fIours\fR

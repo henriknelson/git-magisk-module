@@ -13,6 +13,7 @@ checkout_op.tcl
 choose_font.tcl
 choose_repository.tcl
 choose_rev.tcl
+chord.tcl
 class.tcl
 commit.tcl
 console.tcl

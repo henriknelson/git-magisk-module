@@ -2,12 +2,12 @@
 .\"     Title: git
 .\"    Author: [see the "Authors" section]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/28/2019
+.\"      Date: 04/12/2020
 .\"    Manual: Git Manual
-.\"    Source: Git 2.23.0
+.\"    Source: Git 2.26.0
 .\"  Language: English
 .\"
-.TH "GIT" "1" "08/28/2019" "Git 2\&.23\&.0" "Git Manual"
+.TH "GIT" "1" "04/12/2020" "Git 2\&.26\&.0" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -170,9 +170,22 @@ Do not pipe Git output into a pager\&.
 .PP
 \-\-git\-dir=<path>
 .RS 4
-Set the path to the repository\&. This can also be controlled by setting the
+Set the path to the repository ("\&.git" directory)\&. This can also be controlled by setting the
 \fBGIT_DIR\fR
 environment variable\&. It can be an absolute path or relative path to current working directory\&.
+.sp
+Specifying the location of the "\&.git" directory using this option (or
+\fBGIT_DIR\fR
+environment variable) turns off the repository discovery that tries to find a directory with "\&.git" subdirectory (which is how the repository and the top\-level of the working tree are discovered), and tells Git that you are at the top level of the working tree\&. If you are not at the top\-level directory of the working tree, you should tell Git where the top\-level of the working tree is, with the
+\fB\-\-work\-tree=<path>\fR
+option (or
+\fBGIT_WORK_TREE\fR
+environment variable)
+.sp
+If you just want to run git as if it was started in
+\fB<path>\fR
+then use
+\fBgit \-C <path>\fR\&.
 .RE
 .PP
 \-\-work\-tree=<path>
@@ -432,6 +445,11 @@ output\&.
 \fBgit-show\fR(1)
 .RS 4
 Show various types of objects\&.
+.RE
+.PP
+\fBgit-sparse-checkout\fR(1)
+.RS 4
+Initialize and modify the sparse\-checkout\&.
 .RE
 .PP
 \fBgit-stash\fR(1)
@@ -900,7 +918,7 @@ Validate packed Git archive files\&.
 .RE
 .sp
 In general, the interrogate commands do not touch the files in the working tree\&.
-.SS "Synching repositories"
+.SS "Syncing repositories"
 .PP
 \fBgit-daemon\fR(1)
 .RS 4
@@ -1257,10 +1275,59 @@ for details\&. This variable has lower precedence than other path variables such
 .RE
 .SS "Git Commits"
 .PP
-\fBGIT_AUTHOR_NAME\fR, \fBGIT_AUTHOR_EMAIL\fR, \fBGIT_AUTHOR_DATE\fR, \fBGIT_COMMITTER_NAME\fR, \fBGIT_COMMITTER_EMAIL\fR, \fBGIT_COMMITTER_DATE\fR, \fIEMAIL\fR
+\fBGIT_AUTHOR_NAME\fR
 .RS 4
-see
-\fBgit-commit-tree\fR(1)
+The human\-readable name used in the author identity when creating commit or tag objects, or when writing reflogs\&. Overrides the
+\fBuser\&.name\fR
+and
+\fBauthor\&.name\fR
+configuration settings\&.
+.RE
+.PP
+\fBGIT_AUTHOR_EMAIL\fR
+.RS 4
+The email address used in the author identity when creating commit or tag objects, or when writing reflogs\&. Overrides the
+\fBuser\&.email\fR
+and
+\fBauthor\&.email\fR
+configuration settings\&.
+.RE
+.PP
+\fBGIT_AUTHOR_DATE\fR
+.RS 4
+The date used for the author identity when creating commit or tag objects, or when writing reflogs\&. See
+\fBgit-commit\fR(1)
+for valid formats\&.
+.RE
+.PP
+\fBGIT_COMMITTER_NAME\fR
+.RS 4
+The human\-readable name used in the committer identity when creating commit or tag objects, or when writing reflogs\&. Overrides the
+\fBuser\&.name\fR
+and
+\fBcommitter\&.name\fR
+configuration settings\&.
+.RE
+.PP
+\fBGIT_COMMITTER_EMAIL\fR
+.RS 4
+The email address used in the author identity when creating commit or tag objects, or when writing reflogs\&. Overrides the
+\fBuser\&.email\fR
+and
+\fBcommitter\&.email\fR
+configuration settings\&.
+.RE
+.PP
+\fBGIT_COMMITTER_DATE\fR
+.RS 4
+The date used for the committer identity when creating commit or tag objects, or when writing reflogs\&. See
+\fBgit-commit\fR(1)
+for valid formats\&.
+.RE
+.PP
+\fBEMAIL\fR
+.RS 4
+The email address used in the author and committer identities if no other relevant environment variable or configuration setting has been set\&.
 .RE
 .SS "Git Diffs"
 .PP
@@ -1355,6 +1422,11 @@ This environment variable overrides
 \fBcore\&.pager\fR
 option in
 \fBgit-config\fR(1)\&.
+.RE
+.PP
+\fBGIT_PROGRESS_DELAY\fR
+.RS 4
+A number controlling how many seconds to delay before showing optional progress indicators\&. Defaults to 2\&.
 .RE
 .PP
 \fBGIT_EDITOR\fR
@@ -1735,7 +1807,7 @@ Git was started by Linus Torvalds, and is currently maintained by Junio C Hamano
 If you have a clone of git\&.git itself, the output of \fBgit-shortlog\fR(1) and \fBgit-blame\fR(1) can show you the authors for specific parts of the project\&.
 .SH "REPORTING BUGS"
 .sp
-Report bugs to the Git mailing list <\m[blue]\fBgit@vger\&.kernel\&.org\fR\m[]\&\s-2\u[6]\d\s+2> where the development and maintenance is primarily done\&. You do not have to be subscribed to the list to send a message there\&. See the list archive at \m[blue]\fBhttps://public\-inbox\&.org/git\fR\m[] for previous bug reports and other discussions\&.
+Report bugs to the Git mailing list <\m[blue]\fBgit@vger\&.kernel\&.org\fR\m[]\&\s-2\u[6]\d\s+2> where the development and maintenance is primarily done\&. You do not have to be subscribed to the list to send a message there\&. See the list archive at \m[blue]\fBhttps://lore\&.kernel\&.org/git\fR\m[] for previous bug reports and other discussions\&.
 .sp
 Issues which are security relevant should be disclosed privately to the Git Security mailing list <\m[blue]\fBgit\-security@googlegroups\&.com\fR\m[]\&\s-2\u[7]\d\s+2>\&.
 .SH "SEE ALSO"

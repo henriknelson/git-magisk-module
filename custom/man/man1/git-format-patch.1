@@ -2,12 +2,12 @@
 .\"     Title: git-format-patch
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/28/2019
+.\"      Date: 04/12/2020
 .\"    Manual: Git Manual
-.\"    Source: Git 2.23.0
+.\"    Source: Git 2.26.0
 .\"  Language: English
 .\"
-.TH "GIT\-FORMAT\-PATCH" "1" "08/28/2019" "Git 2\&.23\&.0" "Git Manual"
+.TH "GIT\-FORMAT\-PATCH" "1" "04/12/2020" "Git 2\&.26\&.0" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -40,9 +40,10 @@ git-format-patch \- Prepare patches for e\-mail submission
                    [\-\-signature\-file=<file>]
                    [\-n | \-\-numbered | \-N | \-\-no\-numbered]
                    [\-\-start\-number <n>] [\-\-numbered\-files]
-                   [\-\-in\-reply\-to=Message\-Id] [\-\-suffix=\&.<sfx>]
+                   [\-\-in\-reply\-to=<message id>] [\-\-suffix=\&.<sfx>]
                    [\-\-ignore\-if\-in\-upstream]
-                   [\-\-rfc] [\-\-subject\-prefix=Subject\-Prefix]
+                   [\-\-cover\-from\-description=<mode>]
+                   [\-\-rfc] [\-\-subject\-prefix=<subject prefix>]
                    [(\-\-reroll\-count|\-v) <n>]
                    [\-\-to=<email>] [\-\-cc=<email>]
                    [\-\-[no\-]cover\-letter] [\-\-quiet]
@@ -87,7 +88,7 @@ The first rule takes precedence in the case of a single <commit>\&. To apply the
 .sp
 By default, each output file is numbered sequentially from 1, and uses the first line of the commit message (massaged for pathname safety) as the filename\&. With the \fB\-\-numbered\-files\fR option, the output file names will only be numbers, without the first line of the commit appended\&. The names of the output files are printed to standard output, unless the \fB\-\-stdout\fR option is specified\&.
 .sp
-If \fB\-o\fR is specified, output files are created in <dir>\&. Otherwise they are created in the current working directory\&. The default path can be set with the \fBformat\&.outputDirectory\fR configuration option\&. The \fB\-o\fR option takes precedence over \fBformat\&.outputDirectory\fR\&. To store patches in the current working directory even when \fBformat\&.outputDirectory\fR points elsewhere, use \fB\-o \&.\fR\&.
+If \fB\-o\fR is specified, output files are created in <dir>\&. Otherwise they are created in the current working directory\&. The default path can be set with the \fBformat\&.outputDirectory\fR configuration option\&. The \fB\-o\fR option takes precedence over \fBformat\&.outputDirectory\fR\&. To store patches in the current working directory even when \fBformat\&.outputDirectory\fR points elsewhere, use \fB\-o \&.\fR\&. All directory components will be created\&.
 .sp
 By default, the subject of a single patch is "[PATCH] " followed by the concatenation of lines from the commit message up to the first blank line (see the DISCUSSION section of \fBgit-commit\fR(1))\&.
 .sp
@@ -664,10 +665,10 @@ to take care of threading, you will want to ensure that threading is disabled fo
 \fBgit send\-email\fR\&.
 .RE
 .PP
-\-\-in\-reply\-to=Message\-Id
+\-\-in\-reply\-to=<message id>
 .RS 4
 Make the first mail (or all the mails with
-\fB\-\-no\-thread\fR) appear as a reply to the given Message\-Id, which avoids breaking threads to provide a new patch series\&.
+\fB\-\-no\-thread\fR) appear as a reply to the given <message id>, which avoids breaking threads to provide a new patch series\&.
 .RE
 .PP
 \-\-ignore\-if\-in\-upstream
@@ -675,12 +676,42 @@ Make the first mail (or all the mails with
 Do not include a patch that matches a commit in <until>\&.\&.<since>\&. This will examine all patches reachable from <since> but not from <until> and compare them with the patches being generated, and any patch that matches is ignored\&.
 .RE
 .PP
-\-\-subject\-prefix=<Subject\-Prefix>
+\-\-cover\-from\-description=<mode>
+.RS 4
+Controls which parts of the cover letter will be automatically populated using the branch\(cqs description\&.
+.sp
+If
+\fB<mode>\fR
+is
+\fBmessage\fR
+or
+\fBdefault\fR, the cover letter subject will be populated with placeholder text\&. The body of the cover letter will be populated with the branch\(cqs description\&. This is the default mode when no configuration nor command line option is specified\&.
+.sp
+If
+\fB<mode>\fR
+is
+\fBsubject\fR, the first paragraph of the branch description will populate the cover letter subject\&. The remainder of the description will populate the body of the cover letter\&.
+.sp
+If
+\fB<mode>\fR
+is
+\fBauto\fR, if the first paragraph of the branch description is greater than 100 bytes, then the mode will be
+\fBmessage\fR, otherwise
+\fBsubject\fR
+will be used\&.
+.sp
+If
+\fB<mode>\fR
+is
+\fBnone\fR, both the cover letter subject and body will be populated with placeholder text\&.
+.RE
+.PP
+\-\-subject\-prefix=<subject prefix>
 .RS 4
 Instead of the standard
 \fI[PATCH]\fR
 prefix in the subject line, instead use
-\fI[<Subject\-Prefix>]\fR\&. This allows for useful naming of a patch series, and can be combined with the
+\fI[<subject prefix>]\fR\&. This allows for useful naming of a patch series, and can be combined with the
 \fB\-\-numbered\fR
 option\&.
 .RE
@@ -853,9 +884,13 @@ Do not output contents of changes in binary files, instead display a notice that
 Output an all\-zero hash in each patch\(cqs From header instead of the hash of the commit\&.
 .RE
 .PP
-\-\-base=<commit>
+\-\-[no\-]base[=<commit>]
 .RS 4
-Record the base tree information to identify the state the patch series applies to\&. See the BASE TREE INFORMATION section below for details\&.
+Record the base tree information to identify the state the patch series applies to\&. See the BASE TREE INFORMATION section below for details\&. If <commit> is "auto", a base commit is automatically chosen\&. The
+\fB\-\-no\-base\fR
+option overrides a
+\fBformat\&.useAutoBase\fR
+configuration\&.
 .RE
 .PP
 \-\-root
@@ -869,7 +904,7 @@ Show progress reports on stderr as patches are generated\&.
 .RE
 .SH "CONFIGURATION"
 .sp
-You can specify extra mail header lines to be added to each message, defaults for the subject prefix and file suffix, number patches when outputting more than one patch, add "To" or "Cc:" headers, configure attachments, and sign off patches with configuration variables\&.
+You can specify extra mail header lines to be added to each message, defaults for the subject prefix and file suffix, number patches when outputting more than one patch, add "To:" or "Cc:" headers, configure attachments, change the patch output directory, and sign off patches with configuration variables\&.
 .sp
 .if n \{\
 .RS 4
@@ -884,7 +919,9 @@ You can specify extra mail header lines to be added to each message, defaults fo
         cc = <email>
         attach [ = mime\-boundary\-string ]
         signOff = true
-        coverletter = auto
+        outputDirectory = <directory>
+        coverLetter = auto
+        coverFromDescription = auto
 .fi
 .if n \{\
 .RE
