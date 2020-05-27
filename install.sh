@@ -123,8 +123,8 @@ REPLACE="
 
 print_modname() {
   ui_print "*********************************************"
-  ui_print "     git for Android       	    	       "
-  ui_print "         - v2.26.0                          "
+  ui_print "     git for Android       	    	         "
+  ui_print "         - v2.26.2                           "
   ui_print "         - built by nelshh @ xda-developers  "
   ui_print "*********************************************"
 }
