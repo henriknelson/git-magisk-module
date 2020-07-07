@@ -1,2 +1,5 @@
-*.pm linguist-language=Shell
-*.tcl linguist-language=Shell
+*.1 linguist-language=Shell
+*.3 linguist-language=Shell
+*.5 linguist-language=Shell
+*.7 linguist-language=Shell
+*.nanorc linguist-language=Shell
