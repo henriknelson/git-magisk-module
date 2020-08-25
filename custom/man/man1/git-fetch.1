@@ -2,12 +2,12 @@
 .\"     Title: git-fetch
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 04/28/2020
+.\"      Date: 08/24/2020
 .\"    Manual: Git Manual
-.\"    Source: Git 2.26.2
+.\"    Source: Git 2.28.0
 .\"  Language: English
 .\"
-.TH "GIT\-FETCH" "1" "04/28/2020" "Git 2\&.26\&.2" "Git Manual"
+.TH "GIT\-FETCH" "1" "08/24/2020" "Git 2\&.28\&.0" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -211,7 +211,12 @@ This option controls if and under what conditions new commits of populated submo
 or to unconditionally recurse into all populated submodules when set to
 \fIyes\fR, which is the default when this option is used without any value\&. Use
 \fIon\-demand\fR
-to only recurse into a populated submodule when the superproject retrieves a commit that updates the submodule\(cqs reference to a commit that isn\(cqt already in the local submodule clone\&.
+to only recurse into a populated submodule when the superproject retrieves a commit that updates the submodule\(cqs reference to a commit that isn\(cqt already in the local submodule clone\&. By default,
+\fIon\-demand\fR
+is used, unless
+\fBfetch\&.recurseSubmodules\fR
+is set (see
+\fBgit-config\fR(1))\&.
 .RE
 .PP
 \-j, \-\-jobs=<n>
@@ -1028,24 +1033,24 @@ Using refspecs explicitly:
 .RS 4
 .\}
 .nf
-$ git fetch origin +pu:pu maint:tmp
+$ git fetch origin +seen:seen maint:tmp
 .fi
 .if n \{\
 .RE
 .\}
 .sp
 This updates (or creates, as necessary) branches
-\fBpu\fR
+\fBseen\fR
 and
 \fBtmp\fR
 in the local repository by fetching from the branches (respectively)
-\fBpu\fR
+\fBseen\fR
 and
 \fBmaint\fR
 from the remote repository\&.
 .sp
 The
-\fBpu\fR
+\fBseen\fR
 branch will be updated even if it does not fast\-forward, because it is prefixed with a plus sign;
 \fBtmp\fR
 will not be\&.

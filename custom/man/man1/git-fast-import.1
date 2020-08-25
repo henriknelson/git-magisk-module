@@ -2,12 +2,12 @@
 .\"     Title: git-fast-import
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 04/28/2020
+.\"      Date: 08/24/2020
 .\"    Manual: Git Manual
-.\"    Source: Git 2.26.2
+.\"    Source: Git 2.28.0
 .\"  Language: English
 .\"
-.TH "GIT\-FAST\-IMPORT" "1" "04/28/2020" "Git 2\&.26\&.2" "Git Manual"
+.TH "GIT\-FAST\-IMPORT" "1" "08/24/2020" "Git 2\&.28\&.0" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -140,6 +140,19 @@ After specifying \-\-relative\-marks the paths specified with \-\-import\-marks=
 .sp
 Relative and non\-relative marks may be combined by interweaving \-\-(no\-)\-relative\-marks with the \-\-(import|export)\-marks= options\&.
 .RE
+.SS "Submodule Rewriting"
+.PP
+\-\-rewrite\-submodules\-from=<name>:<file>, \-\-rewrite\-submodules\-to=<name>:<file>
+.RS 4
+Rewrite the object IDs for the submodule specified by <name> from the values used in the from <file> to those used in the to <file>\&. The from marks should have been created by
+\fBgit fast\-export\fR, and the to marks should have been created by
+\fBgit fast\-import\fR
+when importing that same submodule\&.
+.sp
+<name> may be any arbitrary string not containing a colon character, but the same value must be used with both options when specifying corresponding marks\&. Multiple submodules may be specified with different values for <name>\&. It is an error not to use these options in corresponding pairs\&.
+.sp
+These options are primarily useful when converting a repository from one hash algorithm to another; without them, fast\-import will fail if it encounters a submodule because it has no way of writing the object ID into the new hash algorithm\&.
+.RE
 .SS "Performance and Compression Tuning"
 .PP
 \-\-active\-branches=<n>
@@ -225,7 +238,14 @@ If the local offset is not available in the source material, use \(lq+0000\(rq, 
 .sp
 Unlike the
 \fBrfc2822\fR
-format, this format is very strict\&. Any variation in formatting will cause fast\-import to reject the value\&.
+format, this format is very strict\&. Any variation in formatting will cause fast\-import to reject the value, and some sanity checks on the numeric values may also be performed\&.
+.RE
+.PP
+\fBraw\-permissive\fR
+.RS 4
+This is the same as
+\fBraw\fR
+except that no sanity checks on the numeric epoch and local offset are performed\&. This can be useful when trying to filter or import an existing history with e\&.g\&. bogus timezone values\&.
 .RE
 .PP
 \fBrfc2822\fR

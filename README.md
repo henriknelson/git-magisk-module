@@ -6,6 +6,9 @@ This Magisk module installs the latest stable version of the Git client to the t
 
 ## Change Log
 
+### v1.1 - 2020-06-10
+* Updated git to v2.27.0
+
 ### v1.0 - 2019-08-07
 * Initial release
 

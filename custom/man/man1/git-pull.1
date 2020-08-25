@@ -2,12 +2,12 @@
 .\"     Title: git-pull
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 04/28/2020
+.\"      Date: 08/24/2020
 .\"    Manual: Git Manual
-.\"    Source: Git 2.26.2
+.\"    Source: Git 2.28.0
 .\"  Language: English
 .\"
-.TH "GIT\-PULL" "1" "04/28/2020" "Git 2\&.26\&.2" "Git Manual"
+.TH "GIT\-PULL" "1" "08/24/2020" "Git 2\&.28\&.0" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -96,7 +96,8 @@ Pass \-\-verbose to git\-fetch and git\-merge\&.
 .PP
 \-\-[no\-]recurse\-submodules[=yes|on\-demand|no]
 .RS 4
-This option controls if new commits of all populated submodules should be fetched and updated, too (see
+This option controls if new commits of populated submodules should be fetched, and if the working trees of active submodules should be updated, too (see
+\fBgit-fetch\fR(1),
 \fBgit-config\fR(1)
 and
 \fBgitmodules\fR(5))\&.
@@ -162,11 +163,16 @@ With
 \fB\-\-ff\-only\fR, resolve the merge as a fast\-forward when possible\&. When not possible, refuse to merge and exit with a non\-zero status\&.
 .RE
 .PP
-\-S[<keyid>], \-\-gpg\-sign[=<keyid>]
+\-S[<keyid>], \-\-gpg\-sign[=<keyid>], \-\-no\-gpg\-sign
 .RS 4
 GPG\-sign the resulting merge commit\&. The
 \fBkeyid\fR
 argument is optional and defaults to the committer identity; if specified, it must be stuck to the option without a space\&.
+\fB\-\-no\-gpg\-sign\fR
+is useful to countermand both
+\fBcommit\&.gpgSign\fR
+configuration variable, and earlier
+\fB\-\-gpg\-sign\fR\&.
 .RE
 .PP
 \-\-log[=<n>], \-\-no\-log
@@ -236,6 +242,11 @@ Verify that the tip commit of the side branch being merged is signed with a vali
 \-\-summary, \-\-no\-summary
 .RS 4
 Synonyms to \-\-stat and \-\-no\-stat; these are deprecated and will be removed in the future\&.
+.RE
+.PP
+\-\-autostash, \-\-no\-autostash
+.RS 4
+Automatically create a temporary stash entry before the operation begins, and apply it after the operation ends\&. This means that you can run the operation on a dirty worktree\&. However, use with care: the final stash application after a successful merge might result in non\-trivial conflicts\&.
 .RE
 .PP
 \-\-allow\-unrelated\-histories
@@ -309,19 +320,6 @@ carefully\&.
 .RS 4
 Override earlier \-\-rebase\&.
 .RE
-.PP
-\-\-autostash, \-\-no\-autostash
-.RS 4
-Before starting rebase, stash local modifications away (see
-\fBgit-stash\fR(1)) if needed, and apply the stash entry when done\&.
-\fB\-\-no\-autostash\fR
-is useful to override the
-\fBrebase\&.autoStash\fR
-configuration variable (see
-\fBgit-config\fR(1))\&.
-.sp
-This option is only valid when "\-\-rebase" is used\&.
-.RE
 .SS "Options related to fetching"
 .PP
 \-\-all
@@ -392,6 +390,11 @@ configuration variable documented in
 \fBgit-config\fR(1)\&.
 .RE
 .PP
+\-\-dry\-run
+.RS 4
+Show what would be done, without making any changes\&.
+.RE
+.PP
 \-f, \-\-force
 .RS 4
 When
@@ -410,20 +413,64 @@ documentation\&. This option overrides that check\&.
 Keep downloaded pack\&.
 .RE
 .PP
+\-p, \-\-prune
+.RS 4
+Before fetching, remove any remote\-tracking references that no longer exist on the remote\&. Tags are not subject to pruning if they are fetched only because of the default tag auto\-following or due to a \-\-tags option\&. However, if tags are fetched due to an explicit refspec (either on the command line or in the remote configuration, for example if the remote was cloned with the \-\-mirror option), then they are also subject to pruning\&. Supplying
+\fB\-\-prune\-tags\fR
+is a shorthand for providing the tag refspec\&.
+.RE
+.PP
 \-\-no\-tags
 .RS 4
 By default, tags that point at objects that are downloaded from the remote repository are fetched and stored locally\&. This option disables this automatic tag following\&. The default behavior for a remote may be specified with the remote\&.<name>\&.tagOpt setting\&. See
 \fBgit-config\fR(1)\&.
 .RE
 .PP
-\-u, \-\-update\-head\-ok
+\-\-refmap=<refspec>
 .RS 4
-By default
-\fIgit fetch\fR
-refuses to update the head which corresponds to the current branch\&. This flag disables the check\&. This is purely for the internal use for
-\fIgit pull\fR
-to communicate with
-\fIgit fetch\fR, and unless you are implementing your own Porcelain you are not supposed to use it\&.
+When fetching refs listed on the command line, use the specified refspec (can be given more than once) to map the refs to remote\-tracking branches, instead of the values of
+\fBremote\&.*\&.fetch\fR
+configuration variables for the remote repository\&. Providing an empty
+\fB<refspec>\fR
+to the
+\fB\-\-refmap\fR
+option causes Git to ignore the configured refspecs and rely entirely on the refspecs supplied as command\-line arguments\&. See section on "Configured Remote\-tracking Branches" for details\&.
+.RE
+.PP
+\-t, \-\-tags
+.RS 4
+Fetch all tags from the remote (i\&.e\&., fetch remote tags
+\fBrefs/tags/*\fR
+into local tags with the same name), in addition to whatever else would otherwise be fetched\&. Using this option alone does not subject tags to pruning, even if \-\-prune is used (though tags may be pruned anyway if they are also the destination of an explicit refspec; see
+\fB\-\-prune\fR)\&.
+.RE
+.PP
+\-j, \-\-jobs=<n>
+.RS 4
+Number of parallel children to be used for all forms of fetching\&.
+.sp
+If the
+\fB\-\-multiple\fR
+option was specified, the different remotes will be fetched in parallel\&. If multiple submodules are fetched, they will be fetched in parallel\&. To control them independently, use the config settings
+\fBfetch\&.parallel\fR
+and
+\fBsubmodule\&.fetchJobs\fR
+(see
+\fBgit-config\fR(1))\&.
+.sp
+Typically, parallel recursive and multi\-remote fetches will be faster\&. By default fetches are performed sequentially, not in parallel\&.
+.RE
+.PP
+\-\-set\-upstream
+.RS 4
+If the remote is fetched successfully, pull and add upstream (tracking) reference, used by argument\-less
+\fBgit-pull\fR(1)
+and other commands\&. For more information, see
+\fBbranch\&.<name>\&.merge\fR
+and
+\fBbranch\&.<name>\&.remote\fR
+in
+\fBgit-config\fR(1)\&.
 .RE
 .PP
 \-\-upload\-pack <upload\-pack>
@@ -483,7 +530,7 @@ below)\&.
 .RS 4
 Specifies which refs to fetch and which local refs to update\&. When no <refspec>s appear on the command line, the refs to fetch are read from
 \fBremote\&.<repository>\&.fetch\fR
-variables instead (see
+variables instead (see the section "CONFIGURED REMOTE\-TRACKING BRANCHES" in
 \fBgit-fetch\fR(1))\&.
 .sp
 The format of a <refspec> parameter is an optional plus
@@ -1209,7 +1256,8 @@ $ git pull origin next
 .sp
 This leaves a copy of
 \fBnext\fR
-temporarily in FETCH_HEAD, but does not update any remote\-tracking branches\&. Using remote\-tracking branches, the same can be done by invoking fetch and merge:
+temporarily in FETCH_HEAD, and updates the remote\-tracking branch
+\fBorigin/next\fR\&. The same can be done by invoking fetch and merge:
 .sp
 .if n \{\
 .RS 4

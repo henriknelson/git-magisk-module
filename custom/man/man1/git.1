@@ -2,12 +2,12 @@
 .\"     Title: git
 .\"    Author: [see the "Authors" section]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 04/28/2020
+.\"      Date: 08/24/2020
 .\"    Manual: Git Manual
-.\"    Source: Git 2.26.2
+.\"    Source: Git 2.28.0
 .\"  Language: English
 .\"
-.TH "GIT" "1" "04/28/2020" "Git 2\&.26\&.2" "Git Manual"
+.TH "GIT" "1" "08/24/2020" "Git 2\&.28\&.0" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -555,6 +555,11 @@ Annotate file lines with commit information\&.
 \fBgit-blame\fR(1)
 .RS 4
 Show what revision and author last modified each line of a file\&.
+.RE
+.PP
+\fBgit-bugreport\fR(1)
+.RS 4
+Collect information for user to file a bug report\&.
 .RE
 .PP
 \fBgit-count-objects\fR(1)
@@ -1273,6 +1278,11 @@ and
 \fBgit-worktree\fR(1)
 for details\&. This variable has lower precedence than other path variables such as GIT_INDEX_FILE, GIT_OBJECT_DIRECTORY\&...
 .RE
+.PP
+\fBGIT_DEFAULT_HASH\fR
+.RS 4
+If this variable is set, the default hash algorithm for new repositories will be set to this value\&. This value is currently ignored when cloning; the setting of the remote repository is used instead\&. The default is "sha1"\&.
+.RE
 .SS "Git Commits"
 .PP
 \fBGIT_AUTHOR_NAME\fR
@@ -1587,9 +1597,7 @@ for available trace output options\&.
 .RS 4
 Enables a curl full trace dump of all incoming and outgoing data, including descriptive information, of the git transport protocol\&. This is similar to doing curl
 \fB\-\-trace\-ascii\fR
-on the command line\&. This option overrides setting the
-\fBGIT_CURL_VERBOSE\fR
-environment variable\&. See
+on the command line\&. See
 \fBGIT_TRACE\fR
 for available trace output options\&.
 .RE
@@ -1647,11 +1655,11 @@ for available trace output options and
 for full details\&.
 .RE
 .PP
-\fBGIT_REDACT_COOKIES\fR
+\fBGIT_TRACE_REDACT\fR
 .RS 4
-This can be set to a comma\-separated list of strings\&. When a curl trace is enabled (see
-\fBGIT_TRACE_CURL\fR
-above), whenever a "Cookies:" header sent by the client is dumped, values of cookies whose key is in that list (case\-sensitive) are redacted\&.
+By default, when tracing is activated, Git redacts the values of cookies, the "Authorization:" header, and the "Proxy\-Authorization:" header\&. Set this variable to
+\fB0\fR
+to prevent this redaction\&.
 .RE
 .PP
 \fBGIT_LITERAL_PATHSPECS\fR

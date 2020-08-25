@@ -2,12 +2,12 @@
 .\"     Title: git-diff
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 04/28/2020
+.\"      Date: 08/24/2020
 .\"    Manual: Git Manual
-.\"    Source: Git 2.26.2
+.\"    Source: Git 2.28.0
 .\"  Language: English
 .\"
-.TH "GIT\-DIFF" "1" "04/28/2020" "Git 2\&.26\&.2" "Git Manual"
+.TH "GIT\-DIFF" "1" "08/24/2020" "Git 2\&.28\&.0" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -34,14 +34,15 @@ git-diff \- Show changes between commits, commit and working tree, etc
 .nf
 \fIgit diff\fR [<options>] [<commit>] [\-\-] [<path>\&...]
 \fIgit diff\fR [<options>] \-\-cached [<commit>] [\-\-] [<path>\&...]
-\fIgit diff\fR [<options>] <commit> <commit> [\-\-] [<path>\&...]
+\fIgit diff\fR [<options>] <commit> [<commit>\&...] <commit> [\-\-] [<path>\&...]
+\fIgit diff\fR [<options>] <commit>\&...<commit> [\-\-] [<path>\&...]
 \fIgit diff\fR [<options>] <blob> <blob>
 \fIgit diff\fR [<options>] \-\-no\-index [\-\-] <path> <path>
 .fi
 .sp
 .SH "DESCRIPTION"
 .sp
-Show changes between the working tree and the index or a tree, changes between the index and a tree, changes between two trees, changes between two blob objects, or changes between two files on disk\&.
+Show changes between the working tree and the index or a tree, changes between the index and a tree, changes between two trees, changes resulting from a merge, changes between two blob objects, or changes between two files on disk\&.
 .PP
 \fIgit diff\fR [<options>] [\-\-] [<path>\&...]
 .RS 4
@@ -74,9 +75,19 @@ This form is to view the changes you have in your working tree relative to the n
 This is to view the changes between two arbitrary <commit>\&.
 .RE
 .PP
+\fIgit diff\fR [<options>] <commit> <commit>\&... <commit> [\-\-] [<path>\&...]
+.RS 4
+This form is to view the results of a merge commit\&. The first listed <commit> must be the merge itself; the remaining two or more commits should be its parents\&. A convenient way to produce the desired set of revisions is to use the ^@ suffix\&. For instance, if
+\fBmaster\fR
+names a merge commit,
+\fBgit diff master master^@\fR
+gives the same combined diff as
+\fBgit show master\fR\&.
+.RE
+.PP
 \fIgit diff\fR [<options>] <commit>\&.\&.<commit> [\-\-] [<path>\&...]
 .RS 4
-This is synonymous to the previous form\&. If <commit> on one side is omitted, it will have the same effect as using HEAD instead\&.
+This is synonymous to the earlier form (without the "\&.\&.") for viewing the changes between two arbitrary <commit>\&. If <commit> on one side is omitted, it will have the same effect as using HEAD instead\&.
 .RE
 .PP
 \fIgit diff\fR [<options>] <commit>\&.\&.\&.<commit> [\-\-] [<path>\&...]
@@ -841,9 +852,14 @@ Patterns have the same syntax and semantics as patterns used for fnmatch(3) with
 Swap two inputs; that is, show differences from index or on\-disk file to tree contents\&.
 .RE
 .PP
-\-\-relative[=<path>]
+\-\-relative[=<path>], \-\-no\-relative
 .RS 4
 When run from a subdirectory of the project, it can be told to exclude changes outside the directory and show pathnames relative to it with this option\&. When you are not in a subdirectory (e\&.g\&. in a bare repository), you can name which subdirectory to make the output relative to by giving a <path> as an argument\&.
+\fB\-\-no\-relative\fR
+can be used to countermand both
+\fBdiff\&.relative\fR
+config option and previous
+\fB\-\-relative\fR\&.
 .RE
 .PP
 \-a, \-\-text
@@ -2049,7 +2065,7 @@ $ git diff \-R                          \fB(2)\fR
 .RE
 .SH "SEE ALSO"
 .sp
-diff(1), \fBgit-difftool\fR(1), \fBgit-log\fR(1), \fBgitdiffcore\fR(7), \fBgit-format-patch\fR(1), \fBgit-apply\fR(1)
+diff(1), \fBgit-difftool\fR(1), \fBgit-log\fR(1), \fBgitdiffcore\fR(7), \fBgit-format-patch\fR(1), \fBgit-apply\fR(1), \fBgit-show\fR(1)
 .SH "GIT"
 .sp
 Part of the \fBgit\fR(1) suite
