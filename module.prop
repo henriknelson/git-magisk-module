@@ -1,6 +1,6 @@
 id=git-nelshh
 name=Git for Android
-version=v2.28.0
-versionCode=24
+version=v2.30.1
+versionCode=27
 author=nelshh
 description=A statically built version of the git client for android (aarch64)

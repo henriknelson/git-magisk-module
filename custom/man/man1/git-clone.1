@@ -2,12 +2,12 @@
 .\"     Title: git-clone
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/24/2020
+.\"      Date: 02/11/2021
 .\"    Manual: Git Manual
-.\"    Source: Git 2.28.0
+.\"    Source: Git 2.30.1
 .\"  Language: English
 .\"
-.TH "GIT\-CLONE" "1" "08/24/2020" "Git 2\&.28\&.0" "Git Manual"
+.TH "GIT\-CLONE" "1" "02/11/2021" "Git 2\&.30\&.1" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -64,6 +64,11 @@ If the repository is specified as a local path (e\&.g\&.,
 will override the default when
 \fB/path/to/repo\fR
 is given, using the regular Git transport instead\&.
+.sp
+\fBNOTE\fR: this operation can race with concurrent modification to the source repository, similar to running
+\fBcp \-r src dst\fR
+while modifying
+\fBsrc\fR\&.
 .RE
 .PP
 \-\-no\-hardlinks
@@ -83,8 +88,8 @@ to share the objects with the source repository\&. The resulting repository star
 \fBnot\fR
 use it unless you understand what it does\&. If you clone your repository using this option and then delete branches (or use any other Git command that makes any existing commit unreferenced) in the source repository, some objects may become unreferenced (or dangling)\&. These objects may be removed by normal Git operations (such as
 \fBgit commit\fR) which automatically call
-\fBgit gc \-\-auto\fR\&. (See
-\fBgit-gc\fR(1)\&.) If these objects are removed and were referenced by the cloned repository, then the cloned repository will become corrupt\&.
+\fBgit maintenance run \-\-auto\fR\&. (See
+\fBgit-maintenance\fR(1)\&.) If these objects are removed and were referenced by the cloned repository, then the cloned repository will become corrupt\&.
 .sp
 Note that running
 \fBgit repack\fR
@@ -208,7 +213,9 @@ in the target repository\&.
 Instead of using the remote name
 \fBorigin\fR
 to keep track of the upstream repository, use
-\fB<name>\fR\&.
+\fB<name>\fR\&. Overrides
+\fBclone\&.defaultRemoteName\fR
+from the config\&.
 .RE
 .PP
 \-b <name>, \-\-branch <name>

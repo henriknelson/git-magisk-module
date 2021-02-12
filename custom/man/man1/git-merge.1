@@ -2,12 +2,12 @@
 .\"     Title: git-merge
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/24/2020
+.\"      Date: 02/11/2021
 .\"    Manual: Git Manual
-.\"    Source: Git 2.28.0
+.\"    Source: Git 2.30.1
 .\"  Language: English
 .\"
-.TH "GIT\-MERGE" "1" "08/24/2020" "Git 2\&.28\&.0" "Git Manual"
+.TH "GIT\-MERGE" "1" "02/11/2021" "Git 2\&.30\&.1" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -162,11 +162,13 @@ With \-\-no\-log do not list one\-line descriptions from the actual commits bein
 .PP
 \-\-signoff, \-\-no\-signoff
 .RS 4
-Add Signed\-off\-by line by the committer at the end of the commit log message\&. The meaning of a signoff depends on the project, but it typically certifies that committer has the rights to submit this work under the same license and agrees to a Developer Certificate of Origin (see
-\m[blue]\fBhttp://developercertificate\&.org/\fR\m[]
-for more information)\&.
+Add a
+\fBSigned\-off\-by\fR
+trailer by the committer at the end of the commit log message\&. The meaning of a signoff depends on the project to which you\(cqre committing\&. For example, it may certify that the committer has the rights to submit the work under the project\(cqs license or agrees to some contributor representation, such as a Developer Certificate of Origin\&. (See
+\m[blue]\fBhttp://developercertificate\&.org\fR\m[]
+for the one used by the Linux kernel and Git projects\&.) Consult the documentation or leadership of the project to which you\(cqre contributing to understand how the signoffs are used in that project\&.
 .sp
-With \-\-no\-signoff do not add a Signed\-off\-by line\&.
+The \-\-no\-signoff option can be used to countermand an earlier \-\-signoff option on the command line\&.
 .RE
 .PP
 \-\-stat, \-n, \-\-no\-stat
@@ -916,6 +918,17 @@ merge\&.log
 In addition to branch names, populate the log message with at most the specified number of one\-line descriptions from the actual commits that are being merged\&. Defaults to false, and true is a synonym for 20\&.
 .RE
 .PP
+merge\&.suppressDest
+.RS 4
+By adding a glob that matches the names of integration branches to this multi\-valued configuration variable, the default merge message computed for merges into these integration branches will omit "into <branch name>" from its title\&.
+.sp
+An element with an empty value can be used to clear the list of globs accumulated from previous configuration entries\&. When there is no
+\fBmerge\&.suppressDest\fR
+variable defined, the default value of
+\fBmaster\fR
+is used for backward compatibility\&.
+.RE
+.PP
 merge\&.renameLimit
 .RS 4
 The number of files to consider when performing rename detection during a merge; if not specified, defaults to the value of diff\&.renameLimit\&. This setting has no effect if rename detection is turned off\&.
@@ -995,6 +1008,17 @@ bc
 .IP \(bu 2.3
 .\}
 bc3
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+bc4
 .RE
 .sp
 .RS 4
@@ -1138,6 +1162,39 @@ kdiff3
 .IP \(bu 2.3
 .\}
 meld
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+nvimdiff
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+nvimdiff2
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+nvimdiff3
 .RE
 .sp
 .RS 4

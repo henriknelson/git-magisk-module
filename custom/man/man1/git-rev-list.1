@@ -2,12 +2,12 @@
 .\"     Title: git-rev-list
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/24/2020
+.\"      Date: 02/11/2021
 .\"    Manual: Git Manual
-.\"    Source: Git 2.28.0
+.\"    Source: Git 2.30.1
 .\"  Language: English
 .\"
-.TH "GIT\-REV\-LIST" "1" "08/24/2020" "Git 2\&.28\&.0" "Git Manual"
+.TH "GIT\-REV\-LIST" "1" "02/11/2021" "Git 2\&.30\&.1" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -39,7 +39,7 @@ git-rev-list \- Lists commit objects in reverse chronological order
 .sp
 List commits that are reachable by following the \fBparent\fR links from the given commit(s), but exclude commits that are reachable from the one(s) given with a \fI^\fR in front of them\&. The output is given in reverse chronological order by default\&.
 .sp
-You can think of this as a set operation\&. Commits given on the command line form a set of commits that are reachable from any of them, and then commits reachable from any of the ones given with \fI^\fR in front are subtracted from that set\&. The remaining commits are what comes out in the command\(cqs output\&. Various other options and paths parameters can be used to further limit the result\&.
+You can think of this as a set operation\&. Commits reachable from any of the commits given on the command line form a set, and then commits reachable from any of the ones given with \fI^\fR in front are subtracted from that set\&. The remaining commits are what comes out in the command\(cqs output\&. Various other options and paths parameters can be used to further limit the result\&.
 .sp
 Thus, the following command:
 .sp
@@ -47,7 +47,7 @@ Thus, the following command:
 .RS 4
 .\}
 .nf
-        $ git rev\-list foo bar ^baz
+$ git rev\-list foo bar ^baz
 .fi
 .if n \{\
 .RE
@@ -56,14 +56,14 @@ Thus, the following command:
 .sp
 means "list all the commits which are reachable from \fIfoo\fR or \fIbar\fR, but not from \fIbaz\fR"\&.
 .sp
-A special notation "\fI<commit1>\fR\&.\&.\fI<commit2>\fR" can be used as a short\-hand for "^\*(Aq<commit1>\*(Aq \fI<commit2>\fR"\&. For example, either of the following may be used interchangeably:
+A special notation "\fI<commit1>\fR\&.\&.\fI<commit2>\fR" can be used as a short\-hand for "^\fI<commit1>\fR \fI<commit2>\fR"\&. For example, either of the following may be used interchangeably:
 .sp
 .if n \{\
 .RS 4
 .\}
 .nf
-        $ git rev\-list origin\&.\&.HEAD
-        $ git rev\-list HEAD ^origin
+$ git rev\-list origin\&.\&.HEAD
+$ git rev\-list HEAD ^origin
 .fi
 .if n \{\
 .RE
@@ -76,8 +76,8 @@ Another special notation is "\fI<commit1>\fR\&...\fI<commit2>\fR" which is usefu
 .RS 4
 .\}
 .nf
-        $ git rev\-list A B \-\-not $(git merge\-base \-\-all A B)
-        $ git rev\-list A\&.\&.\&.B
+$ git rev\-list A B \-\-not $(git merge\-base \-\-all A B)
+$ git rev\-list A\&.\&.\&.B
 .fi
 .if n \{\
 .RE
@@ -225,7 +225,7 @@ reset these limits (to no limit) again\&. Equivalent forms are
 .PP
 \-\-first\-parent
 .RS 4
-Follow only the first parent commit upon seeing a merge commit\&. This option can give a better overview when viewing the evolution of a particular topic branch, because merges into a topic branch tend to be only about adjusting to updated upstream from time to time, and this option allows you to ignore the individual commits brought in to your history by such a merge\&. Cannot be combined with \-\-bisect\&.
+Follow only the first parent commit upon seeing a merge commit\&. This option can give a better overview when viewing the evolution of a particular topic branch, because merges into a topic branch tend to be only about adjusting to updated upstream from time to time, and this option allows you to ignore the individual commits brought in to your history by such a merge\&.
 .RE
 .PP
 \-\-not
@@ -1258,7 +1258,7 @@ outputs
 .RE
 .\}
 .sp
-would be of roughly the same length\&. Finding the change which introduces a regression is thus reduced to a binary search: repeatedly generate and test new \*(Aqmidpoint\(cqs until the commit chain is of length one\&. Cannot be combined with \-\-first\-parent\&.
+would be of roughly the same length\&. Finding the change which introduces a regression is thus reduced to a binary search: repeatedly generate and test new \*(Aqmidpoint\(cqs until the commit chain is of length one\&.
 .RE
 .PP
 \-\-bisect\-vars
@@ -1556,7 +1556,7 @@ Note: you can specify the default pretty format in the repository configuration 
 .PP
 \-\-abbrev\-commit
 .RS 4
-Instead of showing the full 40\-byte hexadecimal commit object name, show only a partial prefix\&. Non default number of digits can be specified with "\-\-abbrev=<n>" (which also modifies diff output, if it is displayed)\&.
+Instead of showing the full 40\-byte hexadecimal commit object name, show a prefix that names the object uniquely\&. "\-\-abbrev=<n>" (which also modifies diff output, if it is displayed) option can be used to specify the minimum length of the prefix\&.
 .sp
 This should make "\-\-pretty=oneline" a whole lot more readable for people using 80\-column terminals\&.
 .RE
@@ -1564,8 +1564,7 @@ This should make "\-\-pretty=oneline" a whole lot more readable for people using
 \-\-no\-abbrev\-commit
 .RS 4
 Show the full 40\-byte hexadecimal commit object name\&. This negates
-\fB\-\-abbrev\-commit\fR
-and those options which imply it such as "\-\-oneline"\&. It also overrides the
+\fB\-\-abbrev\-commit\fR, either explicit or implied by other options such as "\-\-oneline"\&. It also overrides the
 \fBlog\&.abbrevCommit\fR
 variable\&.
 .RE

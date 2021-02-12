@@ -2,12 +2,12 @@
 .\"     Title: git-grep
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/24/2020
+.\"      Date: 02/11/2021
 .\"    Manual: Git Manual
-.\"    Source: Git 2.28.0
+.\"    Source: Git 2.30.1
 .\"  Language: English
 .\"
-.TH "GIT\-GREP" "1" "08/24/2020" "Git 2\&.28\&.0" "Git Manual"
+.TH "GIT\-GREP" "1" "02/11/2021" "Git 2\&.30\&.1" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -275,7 +275,8 @@ in
 .PP
 \-z, \-\-null
 .RS 4
-Use \e0 as the delimiter for pathnames in the output, and print them verbatim\&. Without this option, pathnames with "unusual" characters are quoted as explained for the configuration variable core\&.quotePath (see git\-config(1))\&.
+Use \e0 as the delimiter for pathnames in the output, and print them verbatim\&. Without this option, pathnames with "unusual" characters are quoted as explained for the configuration variable core\&.quotePath (see
+\fBgit-config\fR(1))\&.
 .RE
 .PP
 \-o, \-\-only\-matching
@@ -312,7 +313,7 @@ Show the filename above the matches in that file instead of at the start of each
 \-p, \-\-show\-function
 .RS 4
 Show the preceding line that contains the function name of the match, unless the matching line is a function name itself\&. The name is determined in the same way as
-\fIgit diff\fR
+\fBgit diff\fR
 works out patch hunk headers (see
 \fIDefining a custom hunk\-header\fR
 in
@@ -342,7 +343,12 @@ between contiguous groups of matches\&.
 .PP
 \-W, \-\-function\-context
 .RS 4
-Show the surrounding text from the previous line containing a function name up to the one before the next function name, effectively showing the whole function in which the match was found\&.
+Show the surrounding text from the previous line containing a function name up to the one before the next function name, effectively showing the whole function in which the match was found\&. The function names are determined in the same way as
+\fBgit diff\fR
+works out patch hunk headers (see
+\fIDefining a custom hunk\-header\fR
+in
+\fBgitattributes\fR(5))\&.
 .RE
 .PP
 \-\-threads <num>

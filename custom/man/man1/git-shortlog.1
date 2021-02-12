@@ -2,12 +2,12 @@
 .\"     Title: git-shortlog
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/24/2020
+.\"      Date: 02/11/2021
 .\"    Manual: Git Manual
-.\"    Source: Git 2.28.0
+.\"    Source: Git 2.30.1
 .\"  Language: English
 .\"
-.TH "GIT\-SHORTLOG" "1" "08/24/2020" "Git 2\&.28\&.0" "Git Manual"
+.TH "GIT\-SHORTLOG" "1" "02/11/2021" "Git 2\&.30\&.1" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -82,9 +82,75 @@ Each pretty\-printed commit will be rewrapped before it is shown\&.
 .\}
 .RE
 .PP
+\-\-group=<type>
+.RS 4
+Group commits based on
+\fB<type>\fR\&. If no
+\fB\-\-group\fR
+option is specified, the default is
+\fBauthor\fR\&.
+\fB<type>\fR
+is one of:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBauthor\fR, commits are grouped by author
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBcommitter\fR, commits are grouped by committer (the same as
+\fB\-c\fR)
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+\fBtrailer:<field>\fR, the
+\fB<field>\fR
+is interpreted as a case\-insensitive commit message trailer (see
+\fBgit-interpret-trailers\fR(1))\&. For example, if your project uses
+\fBReviewed\-by\fR
+trailers, you might want to see who has been reviewing with
+\fBgit shortlog \-ns \-\-group=trailer:reviewed\-by\fR\&.
+.sp
+Note that commits that do not include the trailer will not be counted\&. Likewise, commits with multiple trailers (e\&.g\&., multiple signoffs) may be counted more than once (but only once per unique trailer value in that commit)\&.
+.sp
+Shortlog will attempt to parse each trailer value as a
+\fBname <email>\fR
+identity\&. If successful, the mailmap is applied and the email is omitted unless the
+\fB\-\-email\fR
+option is specified\&. If the value cannot be parsed as an identity, it will be taken literally and completely\&.
+.RE
+.sp
+If
+\fB\-\-group\fR
+is specified multiple times, commits are counted under each value (but again, only once per unique value in that commit)\&. For example,
+\fBgit shortlog \-\-group=author \-\-group=trailer:co\-authored\-by\fR
+counts both authors and co\-authors\&.
+.RE
+.PP
 \-c, \-\-committer
 .RS 4
-Collect and show committer identities instead of authors\&.
+This is an alias for
+\fB\-\-group=committer\fR\&.
 .RE
 .PP
 \-w[<width>[,<indent1>[,<indent2>]]]
@@ -263,7 +329,7 @@ reset these limits (to no limit) again\&. Equivalent forms are
 .PP
 \-\-first\-parent
 .RS 4
-Follow only the first parent commit upon seeing a merge commit\&. This option can give a better overview when viewing the evolution of a particular topic branch, because merges into a topic branch tend to be only about adjusting to updated upstream from time to time, and this option allows you to ignore the individual commits brought in to your history by such a merge\&. Cannot be combined with \-\-bisect\&.
+Follow only the first parent commit upon seeing a merge commit\&. This option can give a better overview when viewing the evolution of a particular topic branch, because merges into a topic branch tend to be only about adjusting to updated upstream from time to time, and this option allows you to ignore the individual commits brought in to your history by such a merge\&.
 .RE
 .PP
 \-\-not
@@ -413,7 +479,7 @@ was listed and as if it was followed by
 \fB\-\-not\fR
 and the good bisection refs
 \fBrefs/bisect/good\-*\fR
-on the command line\&. Cannot be combined with \-\-first\-parent\&.
+on the command line\&.
 .RE
 .PP
 \-\-stdin

@@ -2,12 +2,12 @@
 .\"     Title: git-pull
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/24/2020
+.\"      Date: 02/11/2021
 .\"    Manual: Git Manual
-.\"    Source: Git 2.28.0
+.\"    Source: Git 2.30.1
 .\"  Language: English
 .\"
-.TH "GIT\-PULL" "1" "08/24/2020" "Git 2\&.28\&.0" "Git Manual"
+.TH "GIT\-PULL" "1" "02/11/2021" "Git 2\&.30\&.1" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -185,11 +185,13 @@ With \-\-no\-log do not list one\-line descriptions from the actual commits bein
 .PP
 \-\-signoff, \-\-no\-signoff
 .RS 4
-Add Signed\-off\-by line by the committer at the end of the commit log message\&. The meaning of a signoff depends on the project, but it typically certifies that committer has the rights to submit this work under the same license and agrees to a Developer Certificate of Origin (see
-\m[blue]\fBhttp://developercertificate\&.org/\fR\m[]
-for more information)\&.
+Add a
+\fBSigned\-off\-by\fR
+trailer by the committer at the end of the commit log message\&. The meaning of a signoff depends on the project to which you\(cqre committing\&. For example, it may certify that the committer has the rights to submit the work under the project\(cqs license or agrees to some contributor representation, such as a Developer Certificate of Origin\&. (See
+\m[blue]\fBhttp://developercertificate\&.org\fR\m[]
+for the one used by the Linux kernel and Git projects\&.) Consult the documentation or leadership of the project to which you\(cqre contributing to understand how the signoffs are used in that project\&.
 .sp
-With \-\-no\-signoff do not add a Signed\-off\-by line\&.
+The \-\-no\-signoff option can be used to countermand an earlier \-\-signoff option on the command line\&.
 .RE
 .PP
 \-\-stat, \-n, \-\-no\-stat
@@ -463,7 +465,7 @@ Typically, parallel recursive and multi\-remote fetches will be faster\&. By def
 .PP
 \-\-set\-upstream
 .RS 4
-If the remote is fetched successfully, pull and add upstream (tracking) reference, used by argument\-less
+If the remote is fetched successfully, add upstream (tracking) reference, used by argument\-less
 \fBgit-pull\fR(1)
 and other commands\&. For more information, see
 \fBbranch\&.<name>\&.merge\fR
@@ -536,6 +538,17 @@ variables instead (see the section "CONFIGURED REMOTE\-TRACKING BRANCHES" in
 The format of a <refspec> parameter is an optional plus
 \fB+\fR, followed by the source <src>, followed by a colon
 \fB:\fR, followed by the destination ref <dst>\&. The colon can be omitted when <dst> is empty\&. <src> is typically a ref, but it can also be a fully spelled hex object name\&.
+.sp
+A <refspec> may contain a
+\fB*\fR
+in its <src> to indicate a simple pattern match\&. Such a refspec functions like a glob that matches any ref with the same prefix\&. A pattern <refspec> must have a
+\fB*\fR
+in both the <src> and <dst>\&. It will map refs to the destination by replacing the
+\fB*\fR
+with the contents matched from the source\&.
+.sp
+If a refspec is prefixed by
+\fB^\fR, it will be interpreted as a negative refspec\&. Rather than specifying which refs to fetch or which local refs to update, such a refspec will instead specify refs to exclude\&. A ref will be considered to match if it matches at least one positive refspec, and does not match any negative refspec\&. Negative refspecs can be useful to restrict the scope of a pattern refspec so that it will not include specific refs\&. Negative refspecs can themselves be pattern refspecs\&. However, they may only contain a <src> and do not specify a <dst>\&. Fully spelled out hex object names are also not supported\&.
 .sp
 \fBtag <tag>\fR
 means the same as

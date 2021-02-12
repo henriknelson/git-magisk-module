@@ -2,12 +2,12 @@
 .\"     Title: git-show
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/24/2020
+.\"      Date: 02/11/2021
 .\"    Manual: Git Manual
-.\"    Source: Git 2.28.0
+.\"    Source: Git 2.30.1
 .\"  Language: English
 .\"
-.TH "GIT\-SHOW" "1" "08/24/2020" "Git 2\&.28\&.0" "Git Manual"
+.TH "GIT\-SHOW" "1" "02/11/2021" "Git 2\&.30\&.1" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -93,7 +93,7 @@ Note: you can specify the default pretty format in the repository configuration 
 .PP
 \-\-abbrev\-commit
 .RS 4
-Instead of showing the full 40\-byte hexadecimal commit object name, show only a partial prefix\&. Non default number of digits can be specified with "\-\-abbrev=<n>" (which also modifies diff output, if it is displayed)\&.
+Instead of showing the full 40\-byte hexadecimal commit object name, show a prefix that names the object uniquely\&. "\-\-abbrev=<n>" (which also modifies diff output, if it is displayed) option can be used to specify the minimum length of the prefix\&.
 .sp
 This should make "\-\-pretty=oneline" a whole lot more readable for people using 80\-column terminals\&.
 .RE
@@ -101,8 +101,7 @@ This should make "\-\-pretty=oneline" a whole lot more readable for people using
 \-\-no\-abbrev\-commit
 .RS 4
 Show the full 40\-byte hexadecimal commit object name\&. This negates
-\fB\-\-abbrev\-commit\fR
-and those options which imply it such as "\-\-oneline"\&. It also overrides the
+\fB\-\-abbrev\-commit\fR, either explicit or implied by other options such as "\-\-oneline"\&. It also overrides the
 \fBlog\&.abbrevCommit\fR
 variable\&.
 .RE
@@ -1154,8 +1153,7 @@ that show the patch by default, or to cancel the effect of
 \-U<n>, \-\-unified=<n>
 .RS 4
 Generate diffs with <n> lines of context instead of the usual three\&. Implies
-\fB\-\-patch\fR\&. Implies
-\fB\-p\fR\&.
+\fB\-\-patch\fR\&.
 .RE
 .PP
 \-\-output=<file>
@@ -1182,6 +1180,11 @@ For each commit, show a summary of changes using the raw diff format\&. See the 
 .RS 4
 Synonym for
 \fB\-p \-\-raw\fR\&.
+.RE
+.PP
+\-t
+.RS 4
+Show the tree objects in the diff output\&.
 .RE
 .PP
 \-\-indent\-heuristic
@@ -1656,9 +1659,14 @@ In addition to
 .PP
 \-\-abbrev[=<n>]
 .RS 4
-Instead of showing the full 40\-byte hexadecimal object name in diff\-raw format output and diff\-tree header lines, show only a partial prefix\&. This is independent of the
+Instead of showing the full 40\-byte hexadecimal object name in diff\-raw format output and diff\-tree header lines, show the shortest prefix that is at least
+\fI<n>\fR
+hexdigits long that uniquely refers the object\&. In diff\-patch output format,
 \fB\-\-full\-index\fR
-option above, which controls the diff\-patch output format\&. Non default number of digits can be specified with
+takes higher precedence, i\&.e\&. if
+\fB\-\-full\-index\fR
+is specified, full blob names will be shown regardless of
+\fB\-\-abbrev\fR\&. Non default number of digits can be specified with
 \fB\-\-abbrev=<n>\fR\&.
 .RE
 .PP
@@ -1920,6 +1928,11 @@ Ignore whitespace when comparing lines\&. This ignores differences even if one l
 Ignore changes whose lines are all blank\&.
 .RE
 .PP
+\-I<regex>, \-\-ignore\-matching\-lines=<regex>
+.RS 4
+Ignore changes whose all lines match <regex>\&. This option may be specified more than once\&.
+.RE
+.PP
 \-\-inter\-hunk\-context=<lines>
 .RS 4
 Show the context between diff hunks, up to the specified number of lines, thereby fusing hunks that are close to each other\&. Defaults to
@@ -1929,7 +1942,12 @@ or 0 if the config option is unset\&.
 .PP
 \-W, \-\-function\-context
 .RS 4
-Show whole surrounding functions of changes\&.
+Show whole function as context lines for each change\&. The function names are determined in the same way as
+\fBgit diff\fR
+works out patch hunk headers (see
+\fIDefining a custom hunk\-header\fR
+in
+\fBgitattributes\fR(5))\&.
 .RE
 .PP
 \-\-ext\-diff
@@ -1996,7 +2014,7 @@ By default entries added by "git add \-N" appear as an existing empty file in "g
 For more detailed explanation on these common options, see also \fBgitdiffcore\fR(7)\&.
 .SH "GENERATING PATCH TEXT WITH \-P"
 .sp
-Running \fBgit-diff\fR(1), \fBgit-log\fR(1), \fBgit-show\fR(1), \fBgit-diff-index\fR(1), \fBgit-diff-tree\fR(1), or \fBgit-diff-files\fR(1) with the \fB\-p\fR option produces patch text\&. You can customize the creation of patch text via the \fBGIT_EXTERNAL_DIFF\fR and the \fBGIT_DIFF_OPTS\fR environment variables\&.
+Running \fBgit-diff\fR(1), \fBgit-log\fR(1), \fBgit-show\fR(1), \fBgit-diff-index\fR(1), \fBgit-diff-tree\fR(1), or \fBgit-diff-files\fR(1) with the \fB\-p\fR option produces patch text\&. You can customize the creation of patch text via the \fBGIT_EXTERNAL_DIFF\fR and the \fBGIT_DIFF_OPTS\fR environment variables (see \fBgit\fR(1))\&.
 .sp
 What the \-p option produces is slightly different from the traditional diff format:
 .sp

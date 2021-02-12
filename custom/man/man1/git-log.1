@@ -2,12 +2,12 @@
 .\"     Title: git-log
 .\"    Author: [FIXME: author] [see http://docbook.sf.net/el/author]
 .\" Generator: DocBook XSL Stylesheets v1.79.1 <http://docbook.sf.net/>
-.\"      Date: 08/24/2020
+.\"      Date: 02/11/2021
 .\"    Manual: Git Manual
-.\"    Source: Git 2.28.0
+.\"    Source: Git 2.30.1
 .\"  Language: English
 .\"
-.TH "GIT\-LOG" "1" "08/24/2020" "Git 2\&.28\&.0" "Git Manual"
+.TH "GIT\-LOG" "1" "02/11/2021" "Git 2\&.30\&.1" "Git Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -39,7 +39,54 @@ git-log \- Show commit logs
 .sp
 Shows the commit logs\&.
 .sp
-The command takes options applicable to the \fBgit rev\-list\fR command to control what is shown and how, and options applicable to the \fBgit diff\-*\fR commands to control how the changes each commit introduces are shown\&.
+List commits that are reachable by following the \fBparent\fR links from the given commit(s), but exclude commits that are reachable from the one(s) given with a \fI^\fR in front of them\&. The output is given in reverse chronological order by default\&.
+.sp
+You can think of this as a set operation\&. Commits reachable from any of the commits given on the command line form a set, and then commits reachable from any of the ones given with \fI^\fR in front are subtracted from that set\&. The remaining commits are what comes out in the command\(cqs output\&. Various other options and paths parameters can be used to further limit the result\&.
+.sp
+Thus, the following command:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ git log foo bar ^baz
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.sp
+means "list all the commits which are reachable from \fIfoo\fR or \fIbar\fR, but not from \fIbaz\fR"\&.
+.sp
+A special notation "\fI<commit1>\fR\&.\&.\fI<commit2>\fR" can be used as a short\-hand for "^\fI<commit1>\fR \fI<commit2>\fR"\&. For example, either of the following may be used interchangeably:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ git log origin\&.\&.HEAD
+$ git log HEAD ^origin
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.sp
+Another special notation is "\fI<commit1>\fR\&...\fI<commit2>\fR" which is useful for merges\&. The resulting set of commits is the symmetric difference between the two operands\&. The following two commands are equivalent:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$ git log A B \-\-not $(git merge\-base \-\-all A B)
+$ git log A\&.\&.\&.B
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+.sp
+The command takes options applicable to the \fBgit-rev-list\fR(1) command to control what is shown and how, and options applicable to the \fBgit-diff\fR(1) command to control how the changes each commit introduces are shown\&.
 .SH "OPTIONS"
 .PP
 \-\-follow
@@ -109,9 +156,17 @@ Include a line \(lqlog size <number>\(rq in the output for each commit, where <n
 output by allowing them to allocate space in advance\&.
 .RE
 .PP
-\-L <start>,<end>:<file>, \-L :<funcname>:<file>
+\-L<start>,<end>:<file>, \-L:<funcname>:<file>
 .RS 4
-Trace the evolution of the line range given by "<start>,<end>" (or the function name regex <funcname>) within the <file>\&. You may not give any pathspec limiters\&. This is currently limited to a walk starting from a single revision, i\&.e\&., you may only give zero or one positive revision arguments, and <start> and <end> (or <funcname>) must exist in the starting revision\&. You can specify this option more than once\&. Implies
+Trace the evolution of the line range given by
+\fI<start>,<end>\fR, or by the function name regex
+\fI<funcname>\fR, within the
+\fI<file>\fR\&. You may not give any pathspec limiters\&. This is currently limited to a walk starting from a single revision, i\&.e\&., you may only give zero or one positive revision arguments, and
+\fI<start>\fR
+and
+\fI<end>\fR
+(or
+\fI<funcname>\fR) must exist in the starting revision\&. You can specify this option more than once\&. Implies
 \fB\-\-patch\fR\&. Patch output can be suppressed using
 \fB\-\-no\-patch\fR, but other diff formats (namely
 \fB\-\-raw\fR,
@@ -123,7 +178,10 @@ Trace the evolution of the line range given by "<start>,<end>" (or the function 
 \fB\-\-name\-status\fR,
 \fB\-\-check\fR) are not currently implemented\&.
 .sp
-<start> and <end> can take one of these forms:
+\fI<start>\fR
+and
+\fI<end>\fR
+can take one of these forms:
 .sp
 .RS 4
 .ie n \{\
@@ -135,7 +193,11 @@ Trace the evolution of the line range given by "<start>,<end>" (or the function 
 .\}
 number
 .sp
-If <start> or <end> is a number, it specifies an absolute line number (lines count from 1)\&.
+If
+\fI<start>\fR
+or
+\fI<end>\fR
+is a number, it specifies an absolute line number (lines count from 1)\&.
 .RE
 .sp
 .RS 4
@@ -146,11 +208,19 @@ If <start> or <end> is a number, it specifies an absolute line number (lines cou
 .sp -1
 .IP \(bu 2.3
 .\}
-/regex/
+\fB/regex/\fR
 .sp
-This form will use the first line matching the given POSIX regex\&. If <start> is a regex, it will search from the end of the previous
+This form will use the first line matching the given POSIX regex\&. If
+\fI<start>\fR
+is a regex, it will search from the end of the previous
 \fB\-L\fR
-range, if any, otherwise from the start of file\&. If <start> is \(lq^/regex/\(rq, it will search from the start of file\&. If <end> is a regex, it will search starting at the line given by <start>\&.
+range, if any, otherwise from the start of file\&. If
+\fI<start>\fR
+is
+\fB^/regex/\fR, it will search from the start of file\&. If
+\fI<end>\fR
+is a regex, it will search starting at the line given by
+\fI<start>\fR\&.
 .RE
 .sp
 .RS 4
@@ -163,12 +233,30 @@ range, if any, otherwise from the start of file\&. If <start> is \(lq^/regex/\(r
 .\}
 +offset or \-offset
 .sp
-This is only valid for <end> and will specify a number of lines before or after the line given by <start>\&.
+This is only valid for
+\fI<end>\fR
+and will specify a number of lines before or after the line given by
+\fI<start>\fR\&.
 .RE
 .sp
-If \(lq:<funcname>\(rq is given in place of <start> and <end>, it is a regular expression that denotes the range from the first funcname line that matches <funcname>, up to the next funcname line\&. \(lq:<funcname>\(rq searches from the end of the previous
+If
+\fB:<funcname>\fR
+is given in place of
+\fI<start>\fR
+and
+\fI<end>\fR, it is a regular expression that denotes the range from the first funcname line that matches
+\fI<funcname>\fR, up to the next funcname line\&.
+\fB:<funcname>\fR
+searches from the end of the previous
 \fB\-L\fR
-range, if any, otherwise from the start of file\&. \(lq^:<funcname>\(rq searches from the start of file\&.
+range, if any, otherwise from the start of file\&.
+\fB^:<funcname>\fR
+searches from the start of file\&. The function names are determined in the same way as
+\fBgit diff\fR
+works out patch hunk headers (see
+\fIDefining a custom hunk\-header\fR
+in
+\fBgitattributes\fR(5))\&.
 .RE
 .PP
 <revision range>
@@ -333,7 +421,7 @@ reset these limits (to no limit) again\&. Equivalent forms are
 .PP
 \-\-first\-parent
 .RS 4
-Follow only the first parent commit upon seeing a merge commit\&. This option can give a better overview when viewing the evolution of a particular topic branch, because merges into a topic branch tend to be only about adjusting to updated upstream from time to time, and this option allows you to ignore the individual commits brought in to your history by such a merge\&. Cannot be combined with \-\-bisect\&.
+Follow only the first parent commit upon seeing a merge commit\&. This option can give a better overview when viewing the evolution of a particular topic branch, because merges into a topic branch tend to be only about adjusting to updated upstream from time to time, and this option allows you to ignore the individual commits brought in to your history by such a merge\&.
 .RE
 .PP
 \-\-not
@@ -483,7 +571,7 @@ was listed and as if it was followed by
 \fB\-\-not\fR
 and the good bisection refs
 \fBrefs/bisect/good\-*\fR
-on the command line\&. Cannot be combined with \-\-first\-parent\&.
+on the command line\&.
 .RE
 .PP
 \-\-stdin
@@ -1424,7 +1512,7 @@ Note: you can specify the default pretty format in the repository configuration 
 .PP
 \-\-abbrev\-commit
 .RS 4
-Instead of showing the full 40\-byte hexadecimal commit object name, show only a partial prefix\&. Non default number of digits can be specified with "\-\-abbrev=<n>" (which also modifies diff output, if it is displayed)\&.
+Instead of showing the full 40\-byte hexadecimal commit object name, show a prefix that names the object uniquely\&. "\-\-abbrev=<n>" (which also modifies diff output, if it is displayed) option can be used to specify the minimum length of the prefix\&.
 .sp
 This should make "\-\-pretty=oneline" a whole lot more readable for people using 80\-column terminals\&.
 .RE
@@ -1432,8 +1520,7 @@ This should make "\-\-pretty=oneline" a whole lot more readable for people using
 \-\-no\-abbrev\-commit
 .RS 4
 Show the full 40\-byte hexadecimal commit object name\&. This negates
-\fB\-\-abbrev\-commit\fR
-and those options which imply it such as "\-\-oneline"\&. It also overrides the
+\fB\-\-abbrev\-commit\fR, either explicit or implied by other options such as "\-\-oneline"\&. It also overrides the
 \fBlog\&.abbrevCommit\fR
 variable\&.
 .RE
@@ -1741,46 +1828,6 @@ option may also be specified\&.
 When \-\-graph is not used, all history branches are flattened which can make it hard to see that the two consecutive commits do not belong to a linear branch\&. This option puts a barrier in between them in that case\&. If
 \fB<barrier>\fR
 is specified, it is the string that will be shown instead of the default one\&.
-.RE
-.SS "Diff Formatting"
-.sp
-Listed below are options that control the formatting of diff output\&. Some of them are specific to \fBgit-rev-list\fR(1), however other diff options may be given\&. See \fBgit-diff-files\fR(1) for more options\&.
-.PP
-\-c
-.RS 4
-With this option, diff output for a merge commit shows the differences from each of the parents to the merge result simultaneously instead of showing pairwise diff between a parent and the result one at a time\&. Furthermore, it lists only files which were modified from all parents\&.
-.RE
-.PP
-\-\-cc
-.RS 4
-This flag implies the
-\fB\-c\fR
-option and further compresses the patch output by omitting uninteresting hunks whose contents in the parents have only two variants and the merge result picks one of them without modification\&.
-.RE
-.PP
-\-\-combined\-all\-paths
-.RS 4
-This flag causes combined diffs (used for merge commits) to list the name of the file from all parents\&. It thus only has effect when \-c or \-\-cc are specified, and is likely only useful if filename changes are detected (i\&.e\&. when either rename or copy detection have been requested)\&.
-.RE
-.PP
-\-m
-.RS 4
-This flag makes the merge commits show the full diff like regular commits; for each merge parent, a separate log entry and diff is generated\&. An exception is that only diff against the first parent is shown when
-\fB\-\-first\-parent\fR
-option is given; in that case, the output represents the changes the merge brought
-\fIinto\fR
-the then\-current branch\&.
-.RE
-.PP
-\-r
-.RS 4
-Show recursive diffs\&.
-.RE
-.PP
-\-t
-.RS 4
-Show the tree objects in the diff output\&. This implies
-\fB\-r\fR\&.
 .RE
 .SH "PRETTY FORMATS"
 .sp
@@ -2728,7 +2775,45 @@ $ git log \-2 \-\-pretty=%h 4da45bef
 .\}
 .sp
 .RE
-.SH "COMMON DIFF OPTIONS"
+.SH "DIFF FORMATTING"
+.sp
+By default, \fBgit log\fR does not generate any diff output\&. The options below can be used to show the changes made by each commit\&.
+.sp
+Note that unless one of \fB\-c\fR, \fB\-\-cc\fR, or \fB\-m\fR is given, merge commits will never show a diff, even if a diff format like \fB\-\-patch\fR is selected, nor will they match search options like \fB\-S\fR\&. The exception is when \fB\-\-first\-parent\fR is in use, in which merges are treated like normal single\-parent commits (this can be overridden by providing a combined\-diff option or with \fB\-\-no\-diff\-merges\fR)\&.
+.PP
+\-c
+.RS 4
+With this option, diff output for a merge commit shows the differences from each of the parents to the merge result simultaneously instead of showing pairwise diff between a parent and the result one at a time\&. Furthermore, it lists only files which were modified from all parents\&.
+.RE
+.PP
+\-\-cc
+.RS 4
+This flag implies the
+\fB\-c\fR
+option and further compresses the patch output by omitting uninteresting hunks whose contents in the parents have only two variants and the merge result picks one of them without modification\&.
+.RE
+.PP
+\-\-combined\-all\-paths
+.RS 4
+This flag causes combined diffs (used for merge commits) to list the name of the file from all parents\&. It thus only has effect when \-c or \-\-cc are specified, and is likely only useful if filename changes are detected (i\&.e\&. when either rename or copy detection have been requested)\&.
+.RE
+.PP
+\-m
+.RS 4
+This flag makes the merge commits show the full diff like regular commits; for each merge parent, a separate log entry and diff is generated\&. An exception is that only diff against the first parent is shown when
+\fB\-\-first\-parent\fR
+option is given; in that case, the output represents the changes the merge brought
+\fIinto\fR
+the then\-current branch\&.
+.RE
+.PP
+\-\-diff\-merges=off, \-\-no\-diff\-merges
+.RS 4
+Disable output of diffs for merge commits (default)\&. Useful to override
+\fB\-m\fR,
+\fB\-c\fR, or
+\fB\-\-cc\fR\&.
+.RE
 .PP
 \-p, \-u, \-\-patch
 .RS 4
@@ -2746,8 +2831,7 @@ that show the patch by default, or to cancel the effect of
 \-U<n>, \-\-unified=<n>
 .RS 4
 Generate diffs with <n> lines of context instead of the usual three\&. Implies
-\fB\-\-patch\fR\&. Implies
-\fB\-p\fR\&.
+\fB\-\-patch\fR\&.
 .RE
 .PP
 \-\-output=<file>
@@ -2774,6 +2858,11 @@ For each commit, show a summary of changes using the raw diff format\&. See the 
 .RS 4
 Synonym for
 \fB\-p \-\-raw\fR\&.
+.RE
+.PP
+\-t
+.RS 4
+Show the tree objects in the diff output\&.
 .RE
 .PP
 \-\-indent\-heuristic
@@ -3248,9 +3337,14 @@ In addition to
 .PP
 \-\-abbrev[=<n>]
 .RS 4
-Instead of showing the full 40\-byte hexadecimal object name in diff\-raw format output and diff\-tree header lines, show only a partial prefix\&. This is independent of the
+Instead of showing the full 40\-byte hexadecimal object name in diff\-raw format output and diff\-tree header lines, show the shortest prefix that is at least
+\fI<n>\fR
+hexdigits long that uniquely refers the object\&. In diff\-patch output format,
 \fB\-\-full\-index\fR
-option above, which controls the diff\-patch output format\&. Non default number of digits can be specified with
+takes higher precedence, i\&.e\&. if
+\fB\-\-full\-index\fR
+is specified, full blob names will be shown regardless of
+\fB\-\-abbrev\fR\&. Non default number of digits can be specified with
 \fB\-\-abbrev=<n>\fR\&.
 .RE
 .PP
@@ -3512,6 +3606,11 @@ Ignore whitespace when comparing lines\&. This ignores differences even if one l
 Ignore changes whose lines are all blank\&.
 .RE
 .PP
+\-I<regex>, \-\-ignore\-matching\-lines=<regex>
+.RS 4
+Ignore changes whose all lines match <regex>\&. This option may be specified more than once\&.
+.RE
+.PP
 \-\-inter\-hunk\-context=<lines>
 .RS 4
 Show the context between diff hunks, up to the specified number of lines, thereby fusing hunks that are close to each other\&. Defaults to
@@ -3521,7 +3620,12 @@ or 0 if the config option is unset\&.
 .PP
 \-W, \-\-function\-context
 .RS 4
-Show whole surrounding functions of changes\&.
+Show whole function as context lines for each change\&. The function names are determined in the same way as
+\fBgit diff\fR
+works out patch hunk headers (see
+\fIDefining a custom hunk\-header\fR
+in
+\fBgitattributes\fR(5))\&.
 .RE
 .PP
 \-\-ext\-diff
@@ -3588,7 +3692,7 @@ By default entries added by "git add \-N" appear as an existing empty file in "g
 For more detailed explanation on these common options, see also \fBgitdiffcore\fR(7)\&.
 .SH "GENERATING PATCH TEXT WITH \-P"
 .sp
-Running \fBgit-diff\fR(1), \fBgit-log\fR(1), \fBgit-show\fR(1), \fBgit-diff-index\fR(1), \fBgit-diff-tree\fR(1), or \fBgit-diff-files\fR(1) with the \fB\-p\fR option produces patch text\&. You can customize the creation of patch text via the \fBGIT_EXTERNAL_DIFF\fR and the \fBGIT_DIFF_OPTS\fR environment variables\&.
+Running \fBgit-diff\fR(1), \fBgit-log\fR(1), \fBgit-show\fR(1), \fBgit-diff-index\fR(1), \fBgit-diff-tree\fR(1), or \fBgit-diff-files\fR(1) with the \fB\-p\fR option produces patch text\&. You can customize the creation of patch text via the \fBGIT_EXTERNAL_DIFF\fR and the \fBGIT_DIFF_OPTS\fR environment variables (see \fBgit\fR(1))\&.
 .sp
 What the \-p option produces is slightly different from the traditional diff format:
 .sp

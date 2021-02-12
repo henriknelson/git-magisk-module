@@ -1,4 +1,4 @@
-#!/system/bin/sh
+#!/system/bin/bash
 # git: wrapper to set up and run git from terminal
 # nelshh @ xda-developers
 
@@ -11,4 +11,4 @@ else
   term=screen;
 fi;
 
-GIT_TEMPLATE_DIR=$dir/../usr/share/git-core/templates GIT_EXEC_PATH=$dir/../usr/libexec/git-core TERMINFO=$dir/../usr/share/terminfo TERM=$term $dir/git.bin "$@";
+su -c GIT_TEMPLATE_DIR=$dir/../usr/share/git-core/templates GIT_EXEC_PATH=$dir/../usr/libexec/git-core $dir/git.bin "$@";
