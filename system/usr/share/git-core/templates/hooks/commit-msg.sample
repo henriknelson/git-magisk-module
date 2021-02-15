@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 #
 # An example hook script to check the commit log message.
 # Called by "git commit" with one argument, the name of the file

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/system/bin/perl
 
 use lib (split(/:/, $ENV{GITPERLLIB} || '/system/share/perl5'));
 # Copyright (C) 2006, Eric Wong <normalperson@yhbt.net>

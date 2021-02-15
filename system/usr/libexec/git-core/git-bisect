@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 
 USAGE='[help|start|bad|good|new|old|terms|skip|next|reset|visualize|view|replay|log|run]'
 LONG_USAGE='git bisect help

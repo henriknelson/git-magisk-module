@@ -5,30 +5,4 @@
 # This will make sure your module will still work
 # if Magisk change its mount point in the future
 MODDIR=${0%/*};
-
-symlink_from_file() {
-   cat $1 | while read line
-   do
-      target=$(echo $line | sed 's/;/ /g' | awk '{printf $2}');
-      symlink=$(echo $line | sed 's/;/ /g' | awk '{printf $1}');
-      ln -sf $target $2/$symlink;
-      chown 0:0 $2/$symlink;
-      chmod 755 $2/$symlink;
-   done
-   chown -R 0:0 $2;
-   chmod -R 755 $2;
-}
-
-mount -o rw,remount /system/bin;
-mount -o rw,remount /system/usr/libexec;
-
-cd /system/bin;
-cp $MODDIR/symlinks/symlinks_bin .;
-symlink_from_file "$(pwd)/symlinks_bin" "$(pwd)";
-
-cd /system/usr/libexec/git-core;
-cp $MODDIR/symlinks/symlinks_git_core .;
-symlink_from_file "$(pwd)/symlinks_git_core" "$(pwd)";
-
-mount -o ro,remount /system/bin;
-mount -o ro,remount /system/usr/libexec;
+chcon -hR u:object_r:system_file:s0 $MODDIR/system/usr;

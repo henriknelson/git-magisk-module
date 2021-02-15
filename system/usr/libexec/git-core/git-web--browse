@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 #
 # This program launch a web browser on the html page
 # describing a git command.

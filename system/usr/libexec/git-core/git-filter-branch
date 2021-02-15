@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 #
 # Rewrite revision history
 # Copyright (c) Petr Baudis, 2006
@@ -474,7 +474,7 @@ while read commit parents; do
 	else
 		tree=$(git rev-parse "$commit^{tree}")
 	fi
-	workdir=$workdir /bin/sh -c "$filter_commit" "git commit-tree" \
+	workdir=$workdir /system/bin/sh -c "$filter_commit" "git commit-tree" \
 		"$tree" $parentstr < ../message > ../map/$commit ||
 			die "could not write rewritten commit"
 done <../revs

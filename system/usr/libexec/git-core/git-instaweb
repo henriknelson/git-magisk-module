@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/system/bin/sh
 #
 # Copyright (c) 2006 Eric Wong
 #
 
-PERL='/usr/bin/perl'
+PERL='/system/bin/perl'
 OPTIONS_KEEPDASHDASH=
 OPTIONS_STUCKLONG=
 OPTIONS_SPEC="\
@@ -212,7 +212,7 @@ webrick_conf () {
 	# actual gitweb.cgi using a shell script to force it
   wrapper="$fqgitdir/gitweb/$httpd/wrapper.sh"
 	cat > "$wrapper" <<EOF
-#!/bin/sh
+#!/system/bin/sh
 # we use this shell script wrapper around the real gitweb.cgi since
 # there appears to be no other way to pass arbitrary environment variables
 # into the CGI process
@@ -719,7 +719,7 @@ EOF
 
 gitweb_conf() {
 	cat > "$fqgitdir/gitweb/gitweb_config.perl" <<EOF
-#!/usr/bin/perl
+#!/system/bin/perl
 our \$projectroot = "$(dirname "$fqgitdir")";
 our \$git_temp = "$fqgitdir/gitweb/tmp";
 our \$projects_list = \$projectroot;

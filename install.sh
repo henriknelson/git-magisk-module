@@ -28,10 +28,10 @@ SKIPMOUNT=false
 PROPFILE=false
 
 # Set to true if you need post-fs-data script
-POSTFSDATA=false
+POSTFSDATA=true
 
 # Set to true if you need late_start service script
-LATESTARTSERVICE=true
+LATESTARTSERVICE=false
 
 ##########################################################################################
 # Replace list
@@ -151,6 +151,8 @@ set_permissions() {
   chmod -R 755 $MODPATH/system/usr/libexec;
   find $MODPATH/system/usr/libexec -type d -exec chmod 755 {} \+;
   find $MODPATH/system/usr/libexec -type f -exec chmod 755 {} \+;
+  find $MODPATH/system/usr/libexec -type l -exec chmod 755 {} \+;
+  #chcon -hR u:object_r:system_file:s0 $MODPATH/system/usr;
 
   ui_print "[5/7] Installing to /system/etc..";
   chown -R 0:0 $MODPATH/system/etc;
@@ -158,9 +160,9 @@ set_permissions() {
   find $MODPATH/system/etc -type f -exec chmod 644 {} \+;
   chmod -R 755 $MODPATH/system/etc/bash_completion.d;
 
-  chown -R 0:0 $MODPATH/system/usr/share/terminfo;
-  find $MODPATH/system/usr/share/terminfo -type d -exec chmod 755 {} \+;
-  find $MODPATH/system/usr/share/terminfo -type f -exec chmod 644 {} \+;
+  #chown -R 0:0 $MODPATH/system/usr/share/terminfo;
+  #find $MODPATH/system/usr/share/terminfo -type d -exec chmod 755 {} \+;
+  #find $MODPATH/system/usr/share/terminfo -type f -exec chmod 644 {} \+;
 
   ui_print "[6/7] Installing to /system/usr/share..";
   chown -R 0:0 $MODPATH/system/usr/share;

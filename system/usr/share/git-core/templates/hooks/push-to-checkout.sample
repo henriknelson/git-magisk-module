@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 
 # An example hook script to update a checked-out tree on a git push.
 #

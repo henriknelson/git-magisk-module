@@ -671,7 +671,7 @@ you are able to reword the commit.")"
 		read -r command rest < "$todo"
 		mark_action_done
 		eval_gettextln "Executing: \$rest"
-		"${SHELL:-/bin/sh}" -c "$rest" # Actual execution
+		"${SHELL:-/system/bin/sh}" -c "$rest" # Actual execution
 		status=$?
 		# Run in subshell because require_clean_work_tree can die.
 		dirty=f

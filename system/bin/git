@@ -11,4 +11,4 @@ else
   term=screen;
 fi;
 
-su -c GIT_TEMPLATE_DIR=$dir/../usr/share/git-core/templates GIT_EXEC_PATH=$dir/../usr/libexec/git-core $dir/git.bin "$@";
+GIT_TEMPLATE_DIR=/system/usr/share/git-core/templates GIT_EXEC_PATH=/system/usr/libexec/git-core /system/bin/git.bin "$@";

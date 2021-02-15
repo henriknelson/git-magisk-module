@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 OPTIONS_KEEPDASHDASH=
 OPTIONS_STUCKLONG=
 OPTIONS_SPEC="\

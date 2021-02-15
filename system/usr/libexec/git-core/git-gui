@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 # Tcl ignores the next line -*- tcl -*- \
  if test "z$*" = zversion \
  || test "z$*" = z--version; \
@@ -165,7 +165,7 @@ set _githtmldir {}
 set _reponame {}
 set _iscygwin {}
 set _search_path {}
-set _shellpath {/bin/sh}
+set _shellpath {/system/bin/sh}
 
 set _trace [lsearch -exact $argv --trace]
 if {$_trace >= 0} {
